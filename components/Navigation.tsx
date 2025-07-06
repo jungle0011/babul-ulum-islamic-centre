@@ -53,11 +53,24 @@ const Navigation: React.FC = () => {
   ];
 
   const scrollToSection = (href: string) => {
-    const element = document.querySelector(href);
+    // Remove the # from href to get the section ID
+    const sectionId = href.replace('#', '');
+    const element = document.getElementById(sectionId);
+    
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      // Close mobile menu first
+      setIsOpen(false);
+      
+      // Add a small delay to ensure menu is closed before scrolling
+      setTimeout(() => {
+        element.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        });
+      }, 100);
+    } else {
+      console.warn(`Section with id "${sectionId}" not found`);
     }
-    setIsOpen(false);
   };
 
   const scrollToTop = () => {
