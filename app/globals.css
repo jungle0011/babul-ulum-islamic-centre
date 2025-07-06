@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&family=Noto+Naskh+Arabic:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap');
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Poppins', 'Inter', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  
+  [dir="rtl"] body {
+    font-family: 'Noto Naskh Arabic', 'Amiri', serif;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  
+  [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] h5, [dir="rtl"] h6 {
+    font-weight: 600;
+    line-height: 1.4;
+  }
+}
+
+@layer components {
+  .islamic-card {
+    @apply bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-yellow-500/20 hover:shadow-2xl transition-all duration-300 hover:scale-105;
+  }
+  
+  .islamic-button {
+    @apply bg-gradient-to-r from-blue-600 to-blue-800 text-white px-8 py-4 rounded-full font-semibold hover:from-blue-700 hover:to-blue-900 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1;
+  }
+  
+  .gold-accent {
+    @apply relative;
+  }
+  
+  .gold-accent::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-1/3 h-1 bg-gradient-to-r from-yellow-500 to-yellow-400 rounded-full;
+  }
+  
+  .islamic-pattern-bg {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  
+  .geometric-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='islamic' x='0' y='0' width='50' height='50' patternUnits='userSpaceOnUse'%3E%3Cpath d='M25 0 L50 25 L25 50 L0 25 Z' fill='%23d4af37' fill-opacity='0.05'/%3E%3Ccircle cx='25' cy='25' r='3' fill='%23d4af37' fill-opacity='0.1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23islamic)'/%3E%3C/svg%3E");
+  }
+  
+  .section-divider {
+    @apply w-24 h-1 bg-gradient-to-r from-yellow-500 to-yellow-400 mx-auto rounded-full my-8;
+  }
+  
+  .sticky-nav {
+    @apply fixed top-0 left-0 right-0 z-50 transition-all duration-300 backdrop-blur-md;
+  }
+  
+  .nav-hidden {
+    @apply -translate-y-full;
+  }
+  
+  .nav-visible {
+    @apply translate-y-0;
+  }
+  
+  .card-hover {
+    @apply transform transition-all duration-300 hover:scale-105 hover:shadow-2xl;
+  }
+  
+  .gold-glow {
+    @apply shadow-lg hover:shadow-yellow-500/25 transition-shadow duration-300;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-rich-gold to-islamic-gold-600 bg-clip-text text-transparent;
+  }
+  
+  .arabic-text {
+    font-family: 'Noto Naskh Arabic', serif;
+  }
+} 
