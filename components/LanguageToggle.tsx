@@ -17,7 +17,7 @@ const LanguageToggle: React.FC<{ className?: string }> = ({ className = '' }) =>
     <motion.button
       onClick={toggleLanguage}
       aria-label={t('nav.toggleLanguage') || 'Toggle language'}
-      className={`fixed top-4 right-4 z-[60] bg-white/95 backdrop-blur-sm rounded-full p-3 shadow-lg border border-yellow-500/30 hover:shadow-xl transition-all duration-300 group min-h-[44px] min-w-[44px] ${className}`}
+      className={`fixed top-4 z-[60] bg-white/95 backdrop-blur-sm rounded-full p-3 shadow-lg border border-yellow-500/30 hover:shadow-xl transition-all duration-300 group min-h-[44px] min-w-[44px] md:right-4 right-16 ${className}`}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       initial={{ opacity: 0, y: -20 }}
