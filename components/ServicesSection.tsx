@@ -71,6 +71,13 @@ const ServicesSection: React.FC = () => {
       description: t('services.education.desc'),
       color: 'from-indigo-500 to-indigo-700',
       bgColor: 'bg-indigo-50'
+    },
+    {
+      icon: BookOpen,
+      title: t('services.preacher'),
+      description: t('services.preacher.desc'),
+      color: 'from-blue-800 to-blue-400',
+      bgColor: 'bg-blue-50'
     }
   ];
 

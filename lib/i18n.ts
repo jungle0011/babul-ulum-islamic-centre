@@ -40,9 +40,11 @@ const resources = {
       'services.illumination.desc': 'Understanding personal spiritual symbols and signs',
       'services.education': 'Adult Education',
       'services.education.desc': 'Arabic language and Islamic studies for adults',
+      'services.preacher': 'Islamic Preacher / Lecturer',
+      'services.preacher.desc': 'Professional Islamic preaching, lectures, and public speaking',
       
       // Founder
-      'founder.title': 'Our Founder',
+      'founder.title': 'Founder',
       'founder.name': 'Alfa Baba',
       'founder.description': 'A renowned Islamic scholar and spiritual guide with decades of experience in Islamic education and spiritual counseling.',
       
@@ -57,7 +59,7 @@ const resources = {
       'contact.form.send': 'Send Message',
       
       // Footer
-      'footer.rights': '© 2024 Babul Ulum Islamic Learning Centre. All rights reserved.',
+      'footer.rights': '© 2025 Babul Ulum Islamic Learning Centre. All rights reserved.',
       'footer.powered': 'Powered by Sageverse',
       
       // Language Toggle
@@ -113,6 +115,9 @@ const resources = {
       'footer.service3': 'Astrology & Sciences',
       'footer.service4': 'Personal Consultations',
       'footer.service5': 'Spiritual Education',
+      'footer.service6': 'Illumination of personal signs',
+      'footer.service7': 'Adult education',
+      'footer.service8': 'Islamic Preacher / Lecturer',
       
       // Additional About Section - Legacy
       'about.legacy.title': 'A Legacy of Excellence',
@@ -134,7 +139,7 @@ const resources = {
       'contact.getInTouch.text': 'We\'re here to help you on your spiritual journey. Contact us through any of the following channels or fill out the form to get started.',
       'contact.location.title': 'Location',
       'contact.location.address': 'Islamic Learning Centre',
-      'contact.location.country': 'Nigeria',
+      'contact.location.country': 'Kwara state, Nigeria',
       'contact.location.availability': 'Available for online and in-person consultations',
       'contact.quick.title': 'Ready to Start Your Journey?',
       'contact.quick.text': 'Don\'t wait to begin your spiritual transformation. Contact us today and take the first step towards enlightenment.',
@@ -181,9 +186,11 @@ const resources = {
       'services.illumination.desc': 'فهم الرموز والعلامات الروحية الشخصية',
       'services.education': 'التعليم للكبار',
       'services.education.desc': 'اللغة العربية والدراسات الإسلامية للكبار',
+      'services.preacher': 'واعظ ومحاضر إسلامي',
+      'services.preacher.desc': 'الوعظ الإسلامي الاحترافي والمحاضرات والخطابة العامة',
       
       // Founder
-      'founder.title': 'مؤسسنا',
+      'founder.title': 'المؤسس',
       'founder.name': 'ألفا بابا',
       'founder.description': 'عالم إسلامي مرموق ومرشد روحي مع عقود من الخبرة في التعليم الإسلامي والإرشاد الروحي.',
       
@@ -198,7 +205,7 @@ const resources = {
       'contact.form.send': 'إرسال الرسالة',
       
       // Footer
-      'footer.rights': '© 2024 مركز باب العلم للتعليم الإسلامي. جميع الحقوق محفوظة.',
+      'footer.rights': '© 2025 Babul Ulum Islamic Learning Centre. All rights reserved.',
       'footer.powered': 'مدعوم بواسطة Sageverse',
       
       // Language Toggle
@@ -254,6 +261,9 @@ const resources = {
       'footer.service3': 'التنجيم والعلوم',
       'footer.service4': 'استشارات شخصية',
       'footer.service5': 'التعليم الروحي',
+      'footer.service6': 'إضاءة العلامات الشخصية',
+      'footer.service7': 'التعليم للكبار',
+      'footer.service8': 'واعظ ومحاضر إسلامي',
       
       // Additional About Section - Legacy
       'about.legacy.title': 'إرث من التميز',
@@ -275,7 +285,7 @@ const resources = {
       'contact.getInTouch.text': 'نحن هنا لمساعدتك في رحلتك الروحية. تواصل معنا من خلال أي من القنوات التالية أو املأ النموذج للبدء.',
       'contact.location.title': 'الموقع',
       'contact.location.address': 'مركز التعليم الإسلامي',
-      'contact.location.country': 'نيجيريا',
+      'contact.location.country': 'ولاية كوارا، نيجيريا',
       'contact.location.availability': 'متاح للاستشارات عبر الإنترنت والشخصية',
       'contact.quick.title': 'هل أنت مستعد لبدء رحلتك؟',
       'contact.quick.text': 'لا تنتظر لبدء تحولك الروحي. تواصل معنا اليوم واتخذ الخطوة الأولى نحو التنوير.',

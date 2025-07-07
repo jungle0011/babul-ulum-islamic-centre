@@ -149,6 +149,9 @@ const Footer: React.FC = () => {
                 <li className="text-gray-400">{t('footer.service3')}</li>
                 <li className="text-gray-400">{t('footer.service4')}</li>
                 <li className="text-gray-400">{t('footer.service5')}</li>
+                <li className="text-gray-400">{t('footer.service6')}</li>
+                <li className="text-gray-400">{t('footer.service7')}</li>
+                <li className="text-gray-400">{t('footer.service8')}</li>
               </ul>
             </motion.div>
 
