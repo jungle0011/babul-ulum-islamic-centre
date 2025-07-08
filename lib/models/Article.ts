@@ -44,6 +44,10 @@ const ArticleSchema = new Schema({
     type: String,
     required: false,
   },
+  videoUrl: {
+    type: String,
+    required: false,
+  },
   type: {
     type: String,
     required: false,

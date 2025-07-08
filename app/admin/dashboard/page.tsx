@@ -16,6 +16,26 @@ interface Article {
   pinned?: boolean;
 }
 
+// Helper function to check if a URL is a YouTube link
+function isYouTubeUrl(url: string) {
+  return /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//.test(url);
+}
+
+// Helper function to check if a URL is a Vimeo link
+function isVimeoUrl(url: string) {
+  return /^(https?:\/\/)?(www\.)?vimeo\.com\//.test(url);
+}
+
+// Helper functions to get embed URLs
+function getYouTubeEmbedUrl(url: string) {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]{11})/);
+  return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+}
+function getVimeoEmbedUrl(url: string) {
+  const match = url.match(/vimeo\.com\/(\d+)/);
+  return match ? `https://player.vimeo.com/video/${match[1]}` : url;
+}
+
 export default function AdminDashboard() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [title, setTitle] = useState('');
@@ -34,7 +54,12 @@ export default function AdminDashboard() {
   const [success, setSuccess] = useState('');
   const [search, setSearch] = useState('');
   const [editPinned, setEditPinned] = useState(false);
+  const [editTags, setEditTags] = useState('');
   const router = useRouter();
+
+  // Add tag suggestions logic
+  const allTags = Array.from(new Set(articles.flatMap(a => a.tags || [])));
+  const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
 
   const fetchArticles = async () => {
     const res = await fetch('/api/articles');
@@ -92,6 +117,7 @@ export default function AdminDashboard() {
     setEditImageUrl(article.imageUrl || '');
     setEditVideoUrl(article.videoUrl || '');
     setEditPinned(!!article.pinned);
+    setEditTags(article.tags ? article.tags.join(', ') : '');
   };
 
   const handleEdit = async (e: React.FormEvent) => {
@@ -107,7 +133,7 @@ export default function AdminDashboard() {
         content: editContent,
         imageUrl: editImageUrl,
         videoUrl: editVideoUrl,
-        tags: tags.split(',').map(t => t.trim()).filter(Boolean),
+        tags: editTags.split(',').map(t => t.trim()).filter(Boolean),
         pinned: editPinned,
       }),
     });
@@ -180,10 +206,24 @@ export default function AdminDashboard() {
           type="text"
           placeholder="Tags (comma separated) *"
           value={tags}
-          onChange={e => setTags(e.target.value)}
+          onChange={e => {
+            setTags(e.target.value);
+            const input = e.target.value.split(',').pop()?.trim().toLowerCase() || '';
+            setTagSuggestions(input ? allTags.filter(t => t.toLowerCase().startsWith(input) && !tags.split(',').map(t => t.trim().toLowerCase()).includes(t.toLowerCase())) : []);
+          }}
           className="w-full mb-2 p-2 border rounded"
           required
         />
+        {tagSuggestions.length > 0 && (
+          <div className="bg-white border rounded shadow p-2 mb-2 flex flex-wrap gap-2">
+            {tagSuggestions.map(s => (
+              <button key={s} type="button" className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs" onClick={() => {
+                setTags(tags ? tags + ', ' + s : s);
+                setTagSuggestions([]);
+              }}>{s}</button>
+            ))}
+          </div>
+        )}
         <label className="flex items-center gap-2 mb-2">
           <input
             type="checkbox"
@@ -241,6 +281,27 @@ export default function AdminDashboard() {
                     className="w-full p-2 border rounded"
                     placeholder="Video URL (optional)"
                   />
+                  <input
+                    type="text"
+                    value={editTags}
+                    onChange={e => {
+                      setEditTags(e.target.value);
+                      const input = e.target.value.split(',').pop()?.trim().toLowerCase() || '';
+                      setTagSuggestions(input ? allTags.filter(t => t.toLowerCase().startsWith(input) && !e.target.value.split(',').map(t => t.trim().toLowerCase()).includes(t.toLowerCase())) : []);
+                    }}
+                    className="w-full p-2 border rounded"
+                    placeholder="Tags (comma separated)"
+                  />
+                  {tagSuggestions.length > 0 && (
+                    <div className="bg-white border rounded shadow p-2 mb-2 flex flex-wrap gap-2">
+                      {tagSuggestions.map(s => (
+                        <button key={s} type="button" className="px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs" onClick={() => {
+                          setEditTags(editTags ? editTags + ', ' + s : s);
+                          setTagSuggestions([]);
+                        }}>{s}</button>
+                      ))}
+                    </div>
+                  )}
                   <label className="flex items-center gap-2">
                     <input
                       type="checkbox"
@@ -269,10 +330,34 @@ export default function AdminDashboard() {
                   {article.imageUrl && <img src={article.imageUrl} alt="" className="max-h-40 mb-2 rounded" />}
                   {article.videoUrl && (
                     <div className="mb-2">
-                      <video controls className="max-h-60 w-full rounded">
-                        <source src={article.videoUrl} />
-                        Your browser does not support the video tag.
-                      </video>
+                      {isYouTubeUrl(article.videoUrl) ? (
+                        <iframe
+                          width="100%"
+                          height="315"
+                          src={getYouTubeEmbedUrl(article.videoUrl)}
+                          title="YouTube video player"
+                          frameBorder="0"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          allowFullScreen
+                          className="rounded"
+                        />
+                      ) : isVimeoUrl(article.videoUrl) ? (
+                        <iframe
+                          src={getVimeoEmbedUrl(article.videoUrl)}
+                          width="100%"
+                          height="315"
+                          frameBorder="0"
+                          allow="autoplay; fullscreen; picture-in-picture"
+                          allowFullScreen
+                          title="Vimeo video player"
+                          className="rounded"
+                        />
+                      ) : (
+                        <video controls className="max-h-60 w-full rounded">
+                          <source src={article.videoUrl} />
+                          Your browser does not support the video tag.
+                        </video>
+                      )}
                     </div>
                   )}
                   <div className="flex flex-wrap gap-2 mb-2">

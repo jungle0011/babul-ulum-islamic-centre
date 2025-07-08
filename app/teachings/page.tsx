@@ -28,6 +28,7 @@ interface Teaching {
   title_ar?: string;
   content_ar?: string;
   author_ar?: string;
+  videoUrl?: string;
 }
 
 export default function TeachingsPage() {
@@ -257,6 +258,24 @@ function TeachingsPageContent() {
     fetchComments(teaching._id);
   };
 
+  // Helper functions to check for YouTube and Vimeo URLs
+  function isYouTubeUrl(url: string) {
+    return /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\//.test(url);
+  }
+  function isVimeoUrl(url: string) {
+    return /^(https?:\/\/)?(www\.)?vimeo\.com\//.test(url);
+  }
+
+  // Helper functions to get embed URLs
+  function getYouTubeEmbedUrl(url: string) {
+    const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([\w-]{11})/);
+    return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+  }
+  function getVimeoEmbedUrl(url: string) {
+    const match = url.match(/vimeo\.com\/(\d+)/);
+    return match ? `https://player.vimeo.com/video/${match[1]}` : url;
+  }
+
   return (
     <div className="min-h-screen relative">
       {/* Background with Islamic pattern */}
@@ -301,7 +320,7 @@ function TeachingsPageContent() {
                     : 'bg-white/20 text-white hover:bg-white/30 border border-white/30'
                 }`}
               >
-                {t('tags.' + tag) || tag}
+                {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
               </button>
             ))}
             {selectedTag && (
@@ -382,15 +401,48 @@ function TeachingsPageContent() {
                           <img src={teaching.imageUrl} alt={teaching.title} className="w-full h-48 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform duration-300" />
                         )}
                         
+                        {teaching.videoUrl && (
+                          <div className="mb-2">
+                            {isYouTubeUrl(teaching.videoUrl) ? (
+                              <iframe
+                                width="100%"
+                                height="315"
+                                src={getYouTubeEmbedUrl(teaching.videoUrl)}
+                                title="YouTube video player"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen
+                                className="rounded"
+                              />
+                            ) : isVimeoUrl(teaching.videoUrl) ? (
+                              <iframe
+                                src={getVimeoEmbedUrl(teaching.videoUrl)}
+                                width="100%"
+                                height="315"
+                                frameBorder="0"
+                                allow="autoplay; fullscreen; picture-in-picture"
+                                allowFullScreen
+                                title="Vimeo video player"
+                                className="rounded"
+                              />
+                            ) : (
+                              <video controls className="max-h-60 w-full rounded">
+                                <source src={teaching.videoUrl} />
+                                Your browser does not support the video tag.
+                              </video>
+                            )}
+                          </div>
+                        )}
+                        
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
                           {teaching.type && (
                             <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">
                               {t('types.' + teaching.type) || teaching.type}
                             </span>
                           )}
-                          {teaching.tags && teaching.tags.map((tag: string) => (
+                          {Array.isArray(teaching.tags) && teaching.tags.length > 0 && teaching.tags.map((tag: string) => (
                             <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">
-                              {t('tags.' + tag) || tag}
+                              {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
                             </span>
                           ))}
                           <span className="bg-yellow-400 text-white px-2 py-1 rounded text-xs font-bold ml-auto">
@@ -474,15 +526,48 @@ function TeachingsPageContent() {
                           <img src={teaching.imageUrl} alt={teaching.title} className="w-full h-48 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform duration-300" />
                         )}
                         
+                        {teaching.videoUrl && (
+                          <div className="mb-2">
+                            {isYouTubeUrl(teaching.videoUrl) ? (
+                              <iframe
+                                width="100%"
+                                height="315"
+                                src={getYouTubeEmbedUrl(teaching.videoUrl)}
+                                title="YouTube video player"
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen
+                                className="rounded"
+                              />
+                            ) : isVimeoUrl(teaching.videoUrl) ? (
+                              <iframe
+                                src={getVimeoEmbedUrl(teaching.videoUrl)}
+                                width="100%"
+                                height="315"
+                                frameBorder="0"
+                                allow="autoplay; fullscreen; picture-in-picture"
+                                allowFullScreen
+                                title="Vimeo video player"
+                                className="rounded"
+                              />
+                            ) : (
+                              <video controls className="max-h-60 w-full rounded">
+                                <source src={teaching.videoUrl} />
+                                Your browser does not support the video tag.
+                              </video>
+                            )}
+                          </div>
+                        )}
+                        
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
                           {teaching.type && (
                             <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">
                               {t('types.' + teaching.type) || teaching.type}
                             </span>
                           )}
-                          {teaching.tags && teaching.tags.map((tag: string) => (
+                          {Array.isArray(teaching.tags) && teaching.tags.length > 0 && teaching.tags.map((tag: string) => (
                             <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">
-                              {t('tags.' + tag) || tag}
+                              {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
                             </span>
                           ))}
                         </div>
@@ -564,15 +649,48 @@ function TeachingsPageContent() {
                 <img src={modalTeaching.imageUrl} alt={modalTeaching.title} className="w-full h-56 object-cover rounded-lg mb-4" />
               )}
 
+              {modalTeaching.videoUrl && (
+                <div className="mb-4">
+                  {isYouTubeUrl(modalTeaching.videoUrl) ? (
+                    <iframe
+                      width="100%"
+                      height="315"
+                      src={getYouTubeEmbedUrl(modalTeaching.videoUrl)}
+                      title="YouTube video player"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                      className="rounded"
+                    />
+                  ) : isVimeoUrl(modalTeaching.videoUrl) ? (
+                    <iframe
+                      src={getVimeoEmbedUrl(modalTeaching.videoUrl)}
+                      width="100%"
+                      height="315"
+                      frameBorder="0"
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowFullScreen
+                      title="Vimeo video player"
+                      className="rounded"
+                    />
+                  ) : (
+                    <video controls className="max-h-60 w-full rounded">
+                      <source src={modalTeaching.videoUrl} />
+                      Your browser does not support the video tag.
+                    </video>
+                  )}
+                </div>
+              )}
+
               <div className="flex items-center gap-2 mb-2 flex-wrap">
                 {modalTeaching.type && (
                   <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">
                     {t('types.' + modalTeaching.type) || modalTeaching.type}
                   </span>
                 )}
-                {modalTeaching.tags && modalTeaching.tags.map((tag: string) => (
+                {Array.isArray(modalTeaching.tags) && modalTeaching.tags.length > 0 && modalTeaching.tags.map((tag: string) => (
                   <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">
-                    {t('tags.' + tag) || tag}
+                    {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
                   </span>
                 ))}
                 {modalTeaching.pinned && (

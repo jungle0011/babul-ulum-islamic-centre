@@ -11,7 +11,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   await dbConnect();
   const data = await req.json();
-  const { title, content, imageUrl, type, tags, author, authorAvatar, pinned } = data;
+  const { title, content, imageUrl, videoUrl, type, tags, author, authorAvatar, pinned } = data;
   if (!title || !content) {
     return NextResponse.json({ error: 'Title and content are required.' }, { status: 400 });
   }
@@ -19,6 +19,7 @@ export async function POST(req: NextRequest) {
     title,
     content,
     imageUrl,
+    videoUrl,
     type,
     tags,
     author,

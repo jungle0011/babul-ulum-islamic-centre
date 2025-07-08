@@ -18,10 +18,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
   }
   await dbConnect();
   const data = await req.json();
-  const { title, content, imageUrl, type, tags, author, authorAvatar, pinned } = data;
+  const { title, content, imageUrl, videoUrl, type, tags, author, authorAvatar, pinned } = data;
   const article = await Article.findByIdAndUpdate(
     params.id,
-    { title, content, imageUrl, type, tags, author, authorAvatar, pinned },
+    { title, content, imageUrl, videoUrl, type, tags, author, authorAvatar, pinned },
     { new: true }
   );
   if (!article) {
