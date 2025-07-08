@@ -8,6 +8,7 @@ interface Article {
   content: string;
   date: string;
   imageUrl?: string;
+  videoUrl?: string;
   type?: string;
   tags?: string[];
   author?: string;
@@ -15,17 +16,13 @@ interface Article {
   pinned?: boolean;
 }
 
-const typeOptions = ["Prayer", "Wisdom", "Guide", "Announcement", "Other"];
-
 export default function AdminDashboard() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [imageUrl, setImageUrl] = useState('');
-  const [type, setType] = useState('');
+  const [videoUrl, setVideoUrl] = useState('');
   const [tags, setTags] = useState('');
-  const [author, setAuthor] = useState('');
-  const [authorAvatar, setAuthorAvatar] = useState('');
   const [pinned, setPinned] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -33,13 +30,10 @@ export default function AdminDashboard() {
   const [editTitle, setEditTitle] = useState('');
   const [editContent, setEditContent] = useState('');
   const [editImageUrl, setEditImageUrl] = useState('');
-  const [editType, setEditType] = useState('');
-  const [editTags, setEditTags] = useState('');
-  const [editAuthor, setEditAuthor] = useState('');
-  const [editAuthorAvatar, setEditAuthorAvatar] = useState('');
-  const [editPinned, setEditPinned] = useState(false);
+  const [editVideoUrl, setEditVideoUrl] = useState('');
   const [success, setSuccess] = useState('');
   const [search, setSearch] = useState('');
+  const [editPinned, setEditPinned] = useState(false);
   const router = useRouter();
 
   const fetchArticles = async () => {
@@ -57,8 +51,8 @@ export default function AdminDashboard() {
     setLoading(true);
     setError('');
     setSuccess('');
-    if (!title || !content || !type || !tags || !author) {
-      setError('Please fill in all required fields: title, content, type, tags, author.');
+    if (!title || !content) {
+      setError('Please fill in all required fields: title, content.');
       setLoading(false);
       return;
     }
@@ -69,16 +63,14 @@ export default function AdminDashboard() {
         title,
         content,
         imageUrl,
-        type,
+        videoUrl,
         tags: tags.split(',').map(t => t.trim()).filter(Boolean),
-        author,
-        authorAvatar,
         pinned,
       }),
     });
     setLoading(false);
     if (res.ok) {
-      setTitle(''); setContent(''); setImageUrl(''); setType(''); setTags(''); setAuthor(''); setAuthorAvatar(''); setPinned(false);
+      setTitle(''); setContent(''); setImageUrl(''); setVideoUrl(''); setTags(''); setPinned(false);
       setSuccess('Teaching created successfully!');
       fetchArticles();
     } else {
@@ -98,10 +90,7 @@ export default function AdminDashboard() {
     setEditTitle(article.title);
     setEditContent(article.content);
     setEditImageUrl(article.imageUrl || '');
-    setEditType(article.type || '');
-    setEditTags(article.tags ? article.tags.join(', ') : '');
-    setEditAuthor(article.author || '');
-    setEditAuthorAvatar(article.authorAvatar || '');
+    setEditVideoUrl(article.videoUrl || '');
     setEditPinned(!!article.pinned);
   };
 
@@ -117,10 +106,8 @@ export default function AdminDashboard() {
         title: editTitle,
         content: editContent,
         imageUrl: editImageUrl,
-        type: editType,
-        tags: editTags.split(',').map(t => t.trim()).filter(Boolean),
-        author: editAuthor,
-        authorAvatar: editAuthorAvatar,
+        videoUrl: editVideoUrl,
+        tags: tags.split(',').map(t => t.trim()).filter(Boolean),
         pinned: editPinned,
       }),
     });
@@ -143,7 +130,6 @@ export default function AdminDashboard() {
     return (
       article.title.toLowerCase().includes(q) ||
       article.content.toLowerCase().includes(q) ||
-      (article.author && article.author.toLowerCase().includes(q)) ||
       (article.tags && article.tags.some(tag => tag.toLowerCase().includes(q)))
     );
   });
@@ -156,6 +142,10 @@ export default function AdminDashboard() {
       </div>
       <form onSubmit={handleCreate} className="bg-white p-4 rounded shadow mb-8 max-w-xl mx-auto">
         <h2 className="text-lg font-semibold mb-2">Create New Teaching</h2>
+        <div className="mb-2 text-xs text-gray-500">
+          To add an image, upload it to <a href="https://imgur.com/upload" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Imgur</a> or <a href="https://drive.google.com/drive/my-drive" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google Drive</a> (set to public) and paste the link here.<br/>
+          For videos, upload to <a href="https://youtube.com/upload" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">YouTube</a>, <a href="https://vimeo.com/upload" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Vimeo</a>, or Google Drive and paste the share link.
+        </div>
         <input
           type="text"
           placeholder="Title *"
@@ -179,15 +169,13 @@ export default function AdminDashboard() {
           onChange={e => setImageUrl(e.target.value)}
           className="w-full mb-2 p-2 border rounded"
         />
-        <select
-          value={type}
-          onChange={e => setType(e.target.value)}
+        <input
+          type="text"
+          placeholder="Video URL (optional)"
+          value={videoUrl}
+          onChange={e => setVideoUrl(e.target.value)}
           className="w-full mb-2 p-2 border rounded"
-          required
-        >
-          <option value="">Select Type *</option>
-          {typeOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-        </select>
+        />
         <input
           type="text"
           placeholder="Tags (comma separated) *"
@@ -195,21 +183,6 @@ export default function AdminDashboard() {
           onChange={e => setTags(e.target.value)}
           className="w-full mb-2 p-2 border rounded"
           required
-        />
-        <input
-          type="text"
-          placeholder="Author *"
-          value={author}
-          onChange={e => setAuthor(e.target.value)}
-          className="w-full mb-2 p-2 border rounded"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Author Avatar URL (optional)"
-          value={authorAvatar}
-          onChange={e => setAuthorAvatar(e.target.value)}
-          className="w-full mb-2 p-2 border rounded"
         />
         <label className="flex items-center gap-2 mb-2">
           <input
@@ -230,7 +203,7 @@ export default function AdminDashboard() {
           <h2 className="text-xl font-semibold">Teachings</h2>
           <input
             type="text"
-            placeholder="Search by title, content, author, or tag..."
+            placeholder="Search by title, content, or tag..."
             value={search}
             onChange={e => setSearch(e.target.value)}
             className="px-4 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow w-full md:w-80"
@@ -261,34 +234,12 @@ export default function AdminDashboard() {
                     onChange={e => setEditImageUrl(e.target.value)}
                     className="w-full p-2 border rounded"
                   />
-                  <select
-                    value={editType}
-                    onChange={e => setEditType(e.target.value)}
-                    className="w-full p-2 border rounded"
-                  >
-                    <option value="">Select Type (optional)</option>
-                    {typeOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                  </select>
                   <input
                     type="text"
-                    value={editTags}
-                    onChange={e => setEditTags(e.target.value)}
+                    value={editVideoUrl}
+                    onChange={e => setEditVideoUrl(e.target.value)}
                     className="w-full p-2 border rounded"
-                    placeholder="Tags (comma separated)"
-                  />
-                  <input
-                    type="text"
-                    value={editAuthor}
-                    onChange={e => setEditAuthor(e.target.value)}
-                    className="w-full p-2 border rounded"
-                    placeholder="Author (optional)"
-                  />
-                  <input
-                    type="text"
-                    value={editAuthorAvatar}
-                    onChange={e => setEditAuthorAvatar(e.target.value)}
-                    className="w-full p-2 border rounded"
-                    placeholder="Author Avatar URL (optional)"
+                    placeholder="Video URL (optional)"
                   />
                   <label className="flex items-center gap-2">
                     <input
@@ -316,20 +267,18 @@ export default function AdminDashboard() {
                   </div>
                   <div className="text-gray-600 text-sm mb-2">{new Date(article.date).toLocaleString()}</div>
                   {article.imageUrl && <img src={article.imageUrl} alt="" className="max-h-40 mb-2 rounded" />}
+                  {article.videoUrl && (
+                    <div className="mb-2">
+                      <video controls className="max-h-60 w-full rounded">
+                        <source src={article.videoUrl} />
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
+                  )}
                   <div className="flex flex-wrap gap-2 mb-2">
-                    <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">{article.type || 'N/A'}</span>
                     {(article.tags && article.tags.length > 0 ? article.tags : ['N/A']).map(tag => <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">{tag}</span>)}
                     {article.pinned && <span className="bg-yellow-400 text-white px-2 py-1 rounded text-xs font-bold">Featured</span>}
                   </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    {article.authorAvatar ? (
-                      <img src={article.authorAvatar} alt={article.author || 'Author'} className="w-7 h-7 rounded-full object-cover" />
-                    ) : (
-                      <span className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center text-xs text-gray-400">N/A</span>
-                    )}
-                    <span className="text-xs text-gray-500">By {article.author || 'N/A'}</span>
-                  </div>
-                  <p>{article.content}</p>
                 </div>
               )}
             </li>
