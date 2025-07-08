@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LanguageProvider, useLanguage } from '@/components/LanguageProvider';
 import { motion } from 'framer-motion';
+import { FaPlayCircle } from 'react-icons/fa';
 
 interface Comment {
   _id?: string;
@@ -58,6 +59,8 @@ function TeachingsPageContent() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const perPage = 6;
+  // Add state for lightbox
+  const [lightbox, setLightbox] = useState<{ type: 'image' | 'video' | 'tiktok', src: string } | null>(null);
 
   // Check admin status
   useEffect(() => {
@@ -265,6 +268,17 @@ function TeachingsPageContent() {
   function isVimeoUrl(url: string) {
     return /^(https?:\/\/)?(www\.)?vimeo\.com\//.test(url);
   }
+  function isFacebookUrl(url: string) {
+    return /^(https?:\/\/)?(www\.)?facebook\.com\//.test(url);
+  }
+  function getFacebookEmbedUrl(url: string) {
+    // Accepts URLs like https://www.facebook.com/{user}/videos/{video_id}/
+    // Returns https://www.facebook.com/plugins/video.php?href=ENCODED_URL
+    return `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=0&width=560`;
+  }
+  function isTikTokUrl(url: string) {
+    return /tiktok\.com\//.test(url);
+  }
 
   // Helper functions to get embed URLs
   function getYouTubeEmbedUrl(url: string) {
@@ -274,6 +288,14 @@ function TeachingsPageContent() {
   function getVimeoEmbedUrl(url: string) {
     const match = url.match(/vimeo\.com\/(\d+)/);
     return match ? `https://player.vimeo.com/video/${match[1]}` : url;
+  }
+  function getTikTokEmbedUrl(url: string) {
+    const match = url.match(/tiktok\.com\/@[\w.-]+\/video\/(\d+)/);
+    return match ? `https://www.tiktok.com/embed/${match[1]}` : url;
+  }
+  function getGoogleDriveDirectUrl(url: string) {
+    const match = url.match(/drive\.google\.com\/file\/d\/([\w-]+)\/view/);
+    return match ? `https://drive.google.com/uc?export=download&id=${match[1]}` : url;
   }
 
   return (
@@ -397,40 +419,19 @@ function TeachingsPageContent() {
                           {favorites.includes(teaching._id) ? '★' : '☆'}
                         </button>
 
+                        {/* Display image and video */}
                         {teaching.imageUrl && (
-                          <img src={teaching.imageUrl} alt={teaching.title} className="w-full h-48 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform duration-300" />
+                          <img
+                            src={getGoogleDriveDirectUrl(teaching.imageUrl)}
+                            alt={teaching.title}
+                            className="w-full h-40 object-contain rounded-lg mb-2 bg-white"
+                            style={{ maxHeight: 160 }}
+                          />
                         )}
-                        
                         {teaching.videoUrl && (
-                          <div className="mb-2">
-                            {isYouTubeUrl(teaching.videoUrl) ? (
-                              <iframe
-                                width="100%"
-                                height="315"
-                                src={getYouTubeEmbedUrl(teaching.videoUrl)}
-                                title="YouTube video player"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowFullScreen
-                                className="rounded"
-                              />
-                            ) : isVimeoUrl(teaching.videoUrl) ? (
-                              <iframe
-                                src={getVimeoEmbedUrl(teaching.videoUrl)}
-                                width="100%"
-                                height="315"
-                                frameBorder="0"
-                                allow="autoplay; fullscreen; picture-in-picture"
-                                allowFullScreen
-                                title="Vimeo video player"
-                                className="rounded"
-                              />
-                            ) : (
-                              <video controls className="max-h-60 w-full rounded">
-                                <source src={teaching.videoUrl} />
-                                Your browser does not support the video tag.
-                              </video>
-                            )}
+                          <div className="w-full h-40 bg-black rounded-lg flex items-center justify-center mb-2 overflow-hidden">
+                            {/* Show a play icon overlay for video preview, do not load iframe or video yet */}
+                            <span className="text-white text-3xl">▶</span>
                           </div>
                         )}
                         
@@ -522,40 +523,19 @@ function TeachingsPageContent() {
                           {favorites.includes(teaching._id) ? '★' : '☆'}
                         </button>
 
+                        {/* Display image and video */}
                         {teaching.imageUrl && (
-                          <img src={teaching.imageUrl} alt={teaching.title} className="w-full h-48 object-cover rounded-lg mb-4 group-hover:scale-105 transition-transform duration-300" />
+                          <img
+                            src={getGoogleDriveDirectUrl(teaching.imageUrl)}
+                            alt={teaching.title}
+                            className="w-full h-40 object-contain rounded-lg mb-2 bg-white"
+                            style={{ maxHeight: 160 }}
+                          />
                         )}
-                        
                         {teaching.videoUrl && (
-                          <div className="mb-2">
-                            {isYouTubeUrl(teaching.videoUrl) ? (
-                              <iframe
-                                width="100%"
-                                height="315"
-                                src={getYouTubeEmbedUrl(teaching.videoUrl)}
-                                title="YouTube video player"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowFullScreen
-                                className="rounded"
-                              />
-                            ) : isVimeoUrl(teaching.videoUrl) ? (
-                              <iframe
-                                src={getVimeoEmbedUrl(teaching.videoUrl)}
-                                width="100%"
-                                height="315"
-                                frameBorder="0"
-                                allow="autoplay; fullscreen; picture-in-picture"
-                                allowFullScreen
-                                title="Vimeo video player"
-                                className="rounded"
-                              />
-                            ) : (
-                              <video controls className="max-h-60 w-full rounded">
-                                <source src={teaching.videoUrl} />
-                                Your browser does not support the video tag.
-                              </video>
-                            )}
+                          <div className="w-full h-40 bg-black rounded-lg flex items-center justify-center mb-2 overflow-hidden">
+                            {/* Show a play icon overlay for video preview, do not load iframe or video yet */}
+                            <span className="text-white text-3xl">▶</span>
                           </div>
                         )}
                         
@@ -634,227 +614,219 @@ function TeachingsPageContent() {
 
       {/* Read More Modal */}
       {modalTeaching && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
-            <div className="p-6">
-              <button
-                onClick={() => setModalTeaching(null)}
-                className="absolute top-6 right-6 text-gray-400 hover:text-yellow-500 text-2xl font-bold z-10 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"
-                aria-label="Close"
-              >
-                ×
-              </button>
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70" onClick={() => setModalTeaching(null)}>
+          <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6 pt-10" onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => setModalTeaching(null)}
+              className="absolute top-6 right-6 text-gray-400 hover:text-yellow-500 text-2xl font-bold z-10 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"
+              aria-label="Close"
+            >
+              ×
+            </button>
 
+            {/* Media preview */}
+            <div className="mb-4 flex flex-col justify-center items-center gap-4 mt-2">
               {modalTeaching.imageUrl && (
-                <img src={modalTeaching.imageUrl} alt={modalTeaching.title} className="w-full h-56 object-cover rounded-lg mb-4" />
+                <img
+                  src={modalTeaching.imageUrl}
+                  alt={modalTeaching.title}
+                  className="max-h-64 rounded cursor-zoom-in object-contain"
+                  onClick={() => setLightbox({ type: 'image', src: modalTeaching.imageUrl! })}
+                />
               )}
-
               {modalTeaching.videoUrl && (
-                <div className="mb-4">
-                  {isYouTubeUrl(modalTeaching.videoUrl) ? (
-                    <iframe
-                      width="100%"
-                      height="315"
-                      src={getYouTubeEmbedUrl(modalTeaching.videoUrl)}
-                      title="YouTube video player"
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                      allowFullScreen
-                      className="rounded"
-                    />
-                  ) : isVimeoUrl(modalTeaching.videoUrl) ? (
-                    <iframe
-                      src={getVimeoEmbedUrl(modalTeaching.videoUrl)}
-                      width="100%"
-                      height="315"
-                      frameBorder="0"
-                      allow="autoplay; fullscreen; picture-in-picture"
-                      allowFullScreen
-                      title="Vimeo video player"
-                      className="rounded"
-                    />
-                  ) : (
-                    <video controls className="max-h-60 w-full rounded">
-                      <source src={modalTeaching.videoUrl} />
-                      Your browser does not support the video tag.
-                    </video>
-                  )}
+                <div
+                  className="relative w-64 h-40 bg-gray-200 dark:bg-gray-800 rounded flex items-center justify-center cursor-pointer group"
+                  onClick={() => {
+                    const url = getGoogleDriveDirectUrl(modalTeaching.videoUrl || '');
+                    if (isTikTokUrl(url)) {
+                      setLightbox({ type: 'tiktok', src: getTikTokEmbedUrl(url) });
+                    } else if (isYouTubeUrl(url) || isVimeoUrl(url) || isFacebookUrl(url) || url.match(/\.(mp4|webm|ogg)$/)) {
+                      setLightbox({ type: 'video', src: url });
+                    }
+                  }}
+                  title="Play video"
+                >
+                  {/* Play icon overlay */}
+                  <FaPlayCircle className="text-white text-6xl drop-shadow-lg opacity-90 group-hover:scale-110 transition-transform" style={{ filter: 'drop-shadow(0 2px 8px #000)' }} />
                 </div>
               )}
+            </div>
 
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                {modalTeaching.type && (
-                  <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">
-                    {t('types.' + modalTeaching.type) || modalTeaching.type}
-                  </span>
-                )}
-                {Array.isArray(modalTeaching.tags) && modalTeaching.tags.length > 0 && modalTeaching.tags.map((tag: string) => (
-                  <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">
-                    {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
-                  </span>
-                ))}
-                {modalTeaching.pinned && (
-                  <span className="bg-yellow-400 text-white px-2 py-1 rounded text-xs font-bold ml-auto">
-                    {t('forum.featured')}
-                  </span>
-                )}
-              </div>
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              {modalTeaching.type && (
+                <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">
+                  {t('types.' + modalTeaching.type) || modalTeaching.type}
+                </span>
+              )}
+              {Array.isArray(modalTeaching.tags) && modalTeaching.tags.length > 0 && modalTeaching.tags.map((tag: string) => (
+                <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">
+                  {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
+                </span>
+              ))}
+              {modalTeaching.pinned && (
+                <span className="bg-yellow-400 text-white px-2 py-1 rounded text-xs font-bold ml-auto">
+                  {t('forum.featured')}
+                </span>
+              )}
+            </div>
 
-              <h3 className="text-2xl font-bold mb-2 text-gray-800">
-                {language === 'ar' && modalTeaching.title_ar ? modalTeaching.title_ar : modalTeaching.title}
-              </h3>
-              <div className="text-xs text-gray-400 mb-2">
-                {new Date(modalTeaching.date).toLocaleDateString(language)}
-              </div>
-              <p className="text-gray-700 whitespace-pre-line mb-4">
+            <h3 className="text-2xl font-bold mb-2 text-gray-800">
+              {language === 'ar' && modalTeaching.title_ar ? modalTeaching.title_ar : modalTeaching.title}
+            </h3>
+            <div className="text-xs text-gray-400 mb-2">
+              {new Date(modalTeaching.date).toLocaleDateString(language)}
+            </div>
+            <div className="mb-4 bg-white/90 dark:bg-gray-800/90 rounded-lg p-4 shadow border border-gray-200 dark:border-gray-700">
+              <p className="text-gray-800 dark:text-gray-100 text-base font-medium whitespace-pre-line">
                 {language === 'ar' && modalTeaching.content_ar ? modalTeaching.content_ar : modalTeaching.content}
               </p>
+            </div>
 
-              {modalTeaching.author && (
-                <div className="flex items-center gap-2 mb-4">
-                  {modalTeaching.authorAvatar && (
-                    <img src={modalTeaching.authorAvatar} alt={modalTeaching.author} className="w-7 h-7 rounded-full object-cover" />
-                  )}
-                  <span className="text-xs text-gray-500">
-                    {t('by')} {language === 'ar' && modalTeaching.author_ar ? modalTeaching.author_ar : modalTeaching.author}
-                  </span>
-                </div>
+            {modalTeaching.author && (
+              <div className="flex items-center gap-2 mb-4">
+                {modalTeaching.authorAvatar && (
+                  <img src={modalTeaching.authorAvatar} alt={modalTeaching.author} className="w-7 h-7 rounded-full object-cover" />
+                )}
+                <span className="text-xs text-gray-500">
+                  {t('by')} {language === 'ar' && modalTeaching.author_ar ? modalTeaching.author_ar : modalTeaching.author}
+                </span>
+              </div>
+            )}
+
+            {/* Share Buttons */}
+            <div className="flex flex-wrap gap-3 mb-6 -mx-1">
+              <a
+                href={`https://wa.me/?text=${encodeURIComponent((language === 'ar' && modalTeaching.title_ar ? modalTeaching.title_ar : modalTeaching.title) + ' ' + window.location.origin + '/teachings#' + modalTeaching._id)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg flex items-center gap-2 text-sm font-semibold transition flex-1 min-w-[140px] justify-center"
+                title={t('share.whatsapp') || 'WhatsApp'}
+                onClick={e => e.stopPropagation()}
+              >
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#25D366"/><path d="M16 6C10.477 6 6 10.477 6 16c0 1.624.43 3.162 1.18 4.49L6 26l5.646-1.16A9.94 9.94 0 0016 26c5.523 0 10-4.477 10-10S21.523 6 16 6zm0 18a7.94 7.94 0 01-4.07-1.13l-.29-.17-3.36.69.7-3.27-.18-.29A7.94 7.94 0 018 16c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8zm4.29-5.71c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.42-1.34-1.66-.14-.24-.02-.36.1-.48.1-.1.24-.26.36-.4.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.48-.4-.42-.54-.42-.14 0-.3-.02-.46-.02-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.54.58.2 1.04.32 1.4.4.58.12 1.1.1 1.52.06.46-.04 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z" fill="#fff"/></svg>
+                WhatsApp
+              </a>
+              <a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent((language === 'ar' && modalTeaching.title_ar ? modalTeaching.title_ar : modalTeaching.title) + ' ' + window.location.origin + '/teachings#' + modalTeaching._id)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-400 hover:bg-blue-500 text-white px-4 py-3 rounded-lg flex items-center gap-2 text-sm font-semibold transition flex-1 min-w-[140px] justify-center"
+                title={t('share.twitter') || 'Twitter'}
+                onClick={e => e.stopPropagation()}
+              >
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#1DA1F2"/><path d="M25.944 11.05a6.6 6.6 0 01-1.885.516 3.295 3.295 0 001.444-1.817 6.574 6.574 0 01-2.084.797A3.283 3.283 0 0016.616 10c-1.816 0-3.29 1.474-3.29 3.29 0 .258.03.51.085.75-2.735-.137-5.16-1.447-6.782-3.44a3.28 3.28 0 00-.445 1.655c0 1.142.582 2.15 1.47 2.74a3.28 3.28 0 01-1.49-.41v.04c0 1.595 1.135 2.926 2.64 3.23-.277.075-.57.115-.872.115-.213 0-.418-.02-.618-.06.418 1.305 1.63 2.255 3.065 2.28A6.588 6.588 0 018 22.29a9.29 9.29 0 005.034 1.477c6.038 0 9.344-5.003 9.344-9.344 0-.143-.003-.285-.01-.426A6.68 6.68 0 0026 11.5a6.56 6.56 0 01-2.056.563z" fill="#fff"/></svg>
+                Twitter
+              </a>
+              <a
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin + '/teachings#' + modalTeaching._id)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-3 rounded-lg flex items-center gap-2 text-sm font-semibold transition flex-1 min-w-[140px] justify-center"
+                title="Facebook"
+                onClick={e => e.stopPropagation()}
+              >
+                <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#1877F3"/><path d="M22.675 16.001h-3.197v8.001h-3.334v-8.001h-2v-2.667h2v-1.6c0-2.084 1.084-3.334 3.334-3.334h2v2.667h-1.334c-.667 0-.667.334-.667.667v1.6h2.001l-.267 2.667z" fill="#fff"/></svg>
+                Facebook
+              </a>
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(window.location.origin + '/teachings#' + modalTeaching._id).then(() => {
+                    setCopySuccess(t('share.copied') || 'Link copied!');
+                    setTimeout(() => setCopySuccess(''), 2000);
+                  });
+                }}
+                className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-3 rounded-lg flex items-center gap-2 text-sm font-semibold transition flex-1 min-w-[140px] justify-center"
+                title={t('share.copy') || 'Copy Link'}
+              >
+                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 010 5.656l-3.535 3.535a4 4 0 01-5.657-5.657l1.414-1.414m6.364-6.364a4 4 0 015.657 5.657l-1.414 1.414"/></svg>
+                {t('share.copy') || 'Copy Link'}
+              </button>
+            </div>
+
+            {/* Comments Section */}
+            <div className="border-t border-gray-200 pt-6">
+              <h4 className="text-lg font-semibold mb-4 text-blue-900">{t('comments.title')}</h4>
+              
+              {/* Comments List */}
+              <div className="space-y-4 mb-6">
+                {modalTeaching.comments && modalTeaching.comments.length > 0 ? (
+                  (commentsExpanded ? modalTeaching.comments : modalTeaching.comments.slice(0, 2)).map((comment, index) => (
+                    <div key={comment.userId || index} className="bg-gray-50 rounded-lg p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="font-semibold text-gray-800">{comment.name}</span>
+                            <span className="text-xs text-gray-400">
+                              {new Date(comment.date).toLocaleDateString(language)}
+                            </span>
+                          </div>
+                          <p className="text-gray-700">{comment.content}</p>
+                        </div>
+                        {/* Show delete button for admin or comment author */}
+                        {(isAdmin || currentUserComments.has(comment.userId)) && (
+                          <button
+                            onClick={() => handleDeleteComment(comment.userId)}
+                            className="text-red-500 hover:text-red-700 text-sm ml-2"
+                            title={t('comments.delete')}
+                          >
+                            {t('comments.delete')}
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500 text-center py-4">{t('comments.empty')}</p>
+                )}
+              </div>
+              
+              {/* Show more/less button */}
+              {modalTeaching.comments && modalTeaching.comments.length > 2 && (
+                <button
+                  onClick={() => setCommentsExpanded(!commentsExpanded)}
+                  className="block mx-auto mt-2 text-blue-700 underline hover:text-blue-900 text-sm"
+                >
+                  {commentsExpanded ? t('comments.showLess') : t('comments.showMore')}
+                </button>
               )}
 
-              {/* Share Buttons */}
-              <div className="flex flex-wrap gap-3 mb-6 -mx-1">
-                <a
-                  href={`https://wa.me/?text=${encodeURIComponent((language === 'ar' && modalTeaching.title_ar ? modalTeaching.title_ar : modalTeaching.title) + ' ' + window.location.origin + '/teachings#' + modalTeaching._id)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg flex items-center gap-2 text-sm font-semibold transition flex-1 min-w-[140px] justify-center"
-                  title={t('share.whatsapp') || 'WhatsApp'}
-                  onClick={e => e.stopPropagation()}
-                >
-                  <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#25D366"/><path d="M16 6C10.477 6 6 10.477 6 16c0 1.624.43 3.162 1.18 4.49L6 26l5.646-1.16A9.94 9.94 0 0016 26c5.523 0 10-4.477 10-10S21.523 6 16 6zm0 18a7.94 7.94 0 01-4.07-1.13l-.29-.17-3.36.69.7-3.27-.18-.29A7.94 7.94 0 018 16c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8zm4.29-5.71c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1.02-.38-1.94-1.2-.72-.64-1.2-1.42-1.34-1.66-.14-.24-.02-.36.1-.48.1-.1.24-.26.36-.4.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.48-.4-.42-.54-.42-.14 0-.3-.02-.46-.02-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.54.58.2 1.04.32 1.4.4.58.12 1.1.1 1.52.06.46-.04 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z" fill="#fff"/></svg>
-                  WhatsApp
-                </a>
-                <a
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent((language === 'ar' && modalTeaching.title_ar ? modalTeaching.title_ar : modalTeaching.title) + ' ' + window.location.origin + '/teachings#' + modalTeaching._id)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-blue-400 hover:bg-blue-500 text-white px-4 py-3 rounded-lg flex items-center gap-2 text-sm font-semibold transition flex-1 min-w-[140px] justify-center"
-                  title={t('share.twitter') || 'Twitter'}
-                  onClick={e => e.stopPropagation()}
-                >
-                  <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#1DA1F2"/><path d="M25.944 11.05a6.6 6.6 0 01-1.885.516 3.295 3.295 0 001.444-1.817 6.574 6.574 0 01-2.084.797A3.283 3.283 0 0016.616 10c-1.816 0-3.29 1.474-3.29 3.29 0 .258.03.51.085.75-2.735-.137-5.16-1.447-6.782-3.44a3.28 3.28 0 00-.445 1.655c0 1.142.582 2.15 1.47 2.74a3.28 3.28 0 01-1.49-.41v.04c0 1.595 1.135 2.926 2.64 3.23-.277.075-.57.115-.872.115-.213 0-.418-.02-.618-.06.418 1.305 1.63 2.255 3.065 2.28A6.588 6.588 0 018 22.29a9.29 9.29 0 005.034 1.477c6.038 0 9.344-5.003 9.344-9.344 0-.143-.003-.285-.01-.426A6.68 6.68 0 0026 11.5a6.56 6.56 0 01-2.056.563z" fill="#fff"/></svg>
-                  Twitter
-                </a>
-                <a
-                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.origin + '/teachings#' + modalTeaching._id)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-blue-700 hover:bg-blue-800 text-white px-4 py-3 rounded-lg flex items-center gap-2 text-sm font-semibold transition flex-1 min-w-[140px] justify-center"
-                  title="Facebook"
-                  onClick={e => e.stopPropagation()}
-                >
-                  <svg width="20" height="20" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="16" fill="#1877F3"/><path d="M22.675 16.001h-3.197v8.001h-3.334v-8.001h-2v-2.667h2v-1.6c0-2.084 1.084-3.334 3.334-3.334h2v2.667h-1.334c-.667 0-.667.334-.667.667v1.6h2.001l-.267 2.667z" fill="#fff"/></svg>
-                  Facebook
-                </a>
-                <button
-                  onClick={e => {
-                    e.stopPropagation();
-                    navigator.clipboard.writeText(window.location.origin + '/teachings#' + modalTeaching._id).then(() => {
-                      setCopySuccess(t('share.copied') || 'Link copied!');
-                      setTimeout(() => setCopySuccess(''), 2000);
-                    });
-                  }}
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-3 rounded-lg flex items-center gap-2 text-sm font-semibold transition flex-1 min-w-[140px] justify-center"
-                  title={t('share.copy') || 'Copy Link'}
-                >
-                  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 010 5.656l-3.535 3.535a4 4 0 01-5.657-5.657l1.414-1.414m6.364-6.364a4 4 0 015.657 5.657l-1.414 1.414"/></svg>
-                  {t('share.copy') || 'Copy Link'}
-                </button>
-              </div>
-
-              {/* Comments Section */}
-              <div className="border-t border-gray-200 pt-6">
-                <h4 className="text-lg font-semibold mb-4 text-blue-900">{t('comments.title')}</h4>
-                
-                {/* Comments List */}
-                <div className="space-y-4 mb-6">
-                  {modalTeaching.comments && modalTeaching.comments.length > 0 ? (
-                    (commentsExpanded ? modalTeaching.comments : modalTeaching.comments.slice(0, 2)).map((comment, index) => (
-                      <div key={comment.userId || index} className="bg-gray-50 rounded-lg p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
-                              <span className="font-semibold text-gray-800">{comment.name}</span>
-                              <span className="text-xs text-gray-400">
-                                {new Date(comment.date).toLocaleDateString(language)}
-                              </span>
-                            </div>
-                            <p className="text-gray-700">{comment.content}</p>
-                          </div>
-                          {/* Show delete button for admin or comment author */}
-                          {(isAdmin || currentUserComments.has(comment.userId)) && (
-                            <button
-                              onClick={() => handleDeleteComment(comment.userId)}
-                              className="text-red-500 hover:text-red-700 text-sm ml-2"
-                              title={t('comments.delete')}
-                            >
-                              {t('comments.delete')}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 text-center py-4">{t('comments.empty')}</p>
-                  )}
-                </div>
-                
-                {/* Show more/less button */}
-                {modalTeaching.comments && modalTeaching.comments.length > 2 && (
-                  <button
-                    onClick={() => setCommentsExpanded(!commentsExpanded)}
-                    className="block mx-auto mt-2 text-blue-700 underline hover:text-blue-900 text-sm"
-                  >
-                    {commentsExpanded ? t('comments.showLess') : t('comments.showMore')}
-                  </button>
-                )}
-
-                {/* Comment Form */}
-                <form onSubmit={handleCommentSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder={t('comments.name')}
-                      value={commentForm.name}
-                      onChange={(e) => setCommentForm(prev => ({ ...prev, name: e.target.value }))}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                      required
-                    />
-                    <input
-                      type="email"
-                      placeholder={t('comments.email')}
-                      value={commentForm.email}
-                      onChange={(e) => setCommentForm(prev => ({ ...prev, email: e.target.value }))}
-                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                    />
-                  </div>
-                  <textarea
-                    placeholder={t('comments.content')}
-                    value={commentForm.content}
-                    onChange={(e) => setCommentForm(prev => ({ ...prev, content: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
-                    rows={3}
+              {/* Comment Form */}
+              <form onSubmit={handleCommentSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder={t('comments.name')}
+                    value={commentForm.name}
+                    onChange={(e) => setCommentForm(prev => ({ ...prev, name: e.target.value }))}
+                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
                     required
                   />
-                  <button
-                    type="submit"
-                    disabled={commentLoading}
-                    className="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition disabled:opacity-50"
-                  >
-                    {commentLoading ? '...' : t('comments.submit')}
-                  </button>
-                </form>
-              </div>
+                  <input
+                    type="email"
+                    placeholder={t('comments.email')}
+                    value={commentForm.email}
+                    onChange={(e) => setCommentForm(prev => ({ ...prev, email: e.target.value }))}
+                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                  />
+                </div>
+                <textarea
+                  placeholder={t('comments.content')}
+                  value={commentForm.content}
+                  onChange={(e) => setCommentForm(prev => ({ ...prev, content: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400 resize-none"
+                  rows={3}
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={commentLoading}
+                  className="px-4 py-2 bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition disabled:opacity-50"
+                >
+                  {commentLoading ? '...' : t('comments.submit')}
+                </button>
+              </form>
             </div>
           </div>
         </div>
@@ -864,6 +836,72 @@ function TeachingsPageContent() {
       {(copySuccess || commentSuccess) && (
         <div className="fixed left-1/2 top-6 transform -translate-x-1/2 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50">
           {copySuccess || commentSuccess}
+        </div>
+      )}
+
+      {/* Lightbox overlay */}
+      {lightbox && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95" style={{overflowY: 'auto'}} onClick={() => setLightbox(null)}>
+          <button className="absolute top-6 right-6 text-white text-3xl font-bold z-10 bg-black/60 rounded-full w-10 h-10 flex items-center justify-center" aria-label="Close">×</button>
+          {lightbox.type === 'image' && (
+            <img src={lightbox.src} alt="Full" className="max-w-full max-h-full object-contain rounded-lg" />
+          )}
+          {lightbox.type === 'video' && (
+            isYouTubeUrl(lightbox.src) ? (
+              <iframe
+                src={lightbox.src}
+                width="90%"
+                height="80%"
+                style={{ minWidth: 320, minHeight: 180, maxWidth: 900, maxHeight: 600 }}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                title="YouTube video player"
+                className="rounded bg-black"
+              />
+            ) : isVimeoUrl(lightbox.src) ? (
+              <iframe
+                src={lightbox.src}
+                width="90%"
+                height="80%"
+                style={{ minWidth: 320, minHeight: 180, maxWidth: 900, maxHeight: 600 }}
+                frameBorder="0"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowFullScreen
+                title="Vimeo video player"
+                className="rounded bg-black"
+              />
+            ) : isFacebookUrl(lightbox.src) ? (
+              <iframe
+                src={getFacebookEmbedUrl(lightbox.src)}
+                width="560"
+                height="315"
+                style={{ minWidth: 320, minHeight: 180, maxWidth: 900, maxHeight: 600 }}
+                frameBorder="0"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                title="Facebook video player"
+                className="rounded bg-black"
+              />
+            ) : (
+              <video src={lightbox.src} controls autoPlay className="max-w-full max-h-full rounded-lg bg-black" />
+            )
+          )}
+          {lightbox.type === 'tiktok' && (
+            <div className="flex flex-col items-center justify-center w-full h-full">
+              <iframe
+                src={lightbox.src}
+                width="340"
+                height="600"
+                frameBorder="0"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                title="TikTok video player"
+                className="rounded bg-black"
+                style={{ maxWidth: 340, maxHeight: 600, margin: 'auto' }}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

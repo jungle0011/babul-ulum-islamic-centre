@@ -10,6 +10,7 @@ import ServicesSection from '../components/ServicesSection';
 import FounderSection from '../components/FounderSection';
 import ContactSection from '../components/ContactSection';
 import Footer from '../components/Footer';
+import LatestPostsCarousel from '../components/LatestPostsCarousel';
 
 export default function Home() {
   return (
@@ -19,6 +20,7 @@ export default function Home() {
         <Navigation />
         <main>
           <HeroSection />
+          <LatestPostsCarousel />
           <AboutSection />
           <ServicesSection />
           <FounderSection />
