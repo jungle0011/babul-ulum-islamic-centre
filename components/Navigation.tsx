@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const Navigation: React.FC = () => {
   const { t } = useTranslation();
@@ -48,6 +49,7 @@ const Navigation: React.FC = () => {
     { href: '#home', label: t('nav.home') },
     { href: '#about', label: t('nav.about') },
     { href: '#services', label: t('nav.services') },
+    { href: '/teachings', label: t('nav.teachings') },
     { href: 'https://selar.com/m/BabulUlumImamCentre', label: t('nav.bookshop'), external: true, ariaLabel: t('nav.bookshop') },
     { href: '#contact', label: t('nav.contact') },
   ];
@@ -131,7 +133,7 @@ const Navigation: React.FC = () => {
                 >
                   {item.label}
                 </motion.a>
-              ) : (
+              ) : item.href.startsWith('#') ? (
                 <motion.button
                   key={item.href}
                   onClick={() => scrollToSection(item.href)}
@@ -151,6 +153,21 @@ const Navigation: React.FC = () => {
                     activeSection === item.href.replace('#', '') ? 'w-full' : 'w-0 group-hover:w-full'
                   }`}></span>
                 </motion.button>
+              ) : (
+                <Link key={item.href} href={item.href} passHref legacyBehavior>
+                  <motion.a
+                    aria-label={item.label}
+                    className={`font-medium transition-colors relative group min-h-[44px] min-w-[44px] flex items-center justify-center ${
+                      scrolled ? 'text-gray-700 hover:text-blue-600' : 'text-white hover:text-yellow-300'
+                    }`}
+                    whileHover={{ y: -2 }}
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    {item.label}
+                  </motion.a>
+                </Link>
               )
             ))}
           </div>
@@ -194,7 +211,7 @@ const Navigation: React.FC = () => {
                   >
                     {item.label}
                   </motion.a>
-                ) : (
+                ) : item.href.startsWith('#') ? (
                   <motion.button
                     key={item.href}
                     onClick={() => scrollToSection(item.href)}
@@ -205,6 +222,18 @@ const Navigation: React.FC = () => {
                   >
                     {item.label}
                   </motion.button>
+                ) : (
+                  <Link key={item.href} href={item.href} passHref legacyBehavior>
+                    <motion.a
+                      aria-label={item.label}
+                      className="block w-full text-left text-gray-700 hover:text-blue-600 font-medium py-2 transition-colors"
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      {item.label}
+                    </motion.a>
+                  </Link>
                 )
               ))}
             </div>

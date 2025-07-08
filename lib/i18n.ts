@@ -10,6 +10,8 @@ const resources = {
       'nav.services': 'Services',
       'nav.contact': 'Contact',
       'nav.bookshop': 'Bookshop',
+      'nav.teachings': 'Teachings',
+      'teachings.title': 'Teachings',
       
       // Hero Section
       'hero.dua': 'اللهم صلى على سيد السادات السعادات الهدات والبركات',
@@ -65,7 +67,30 @@ const resources = {
       // Language Toggle
       'lang.en': 'English',
       'lang.ar': 'العربية',
-      
+      'nav.toggleLanguage': 'Toggle language',
+
+      // Tags
+      'tags.faith': 'Faith',
+      'tags.spirituality': 'Spirituality',
+      'tags.prayer': 'Prayer',
+      'tags.astrology': 'Astrology',
+      'tags.guidance': 'Guidance',
+      'tags.education': 'Education',
+      'tags.community': 'Community',
+      'tags.legacy': 'Legacy',
+      // Add more as needed
+
+      // Types
+      'types.article': 'Article',
+      'types.video': 'Video',
+      'types.audio': 'Audio',
+      'types.event': 'Event',
+      // Add more as needed
+
+      // Comments Show More/Less
+      'comments.showMore': 'Show more comments',
+      'comments.showLess': 'Show less',
+
       // Additional Hero Section
       'hero.brand': 'Babul Ulum',
       'hero.subtitle': 'Islamic Learning Centre',
@@ -146,6 +171,77 @@ const resources = {
       'contact.quick.call': 'Call Now',
       'contact.quick.whatsapp': 'WhatsApp',
       'contact.quick.email': 'Email',
+      
+      // Forum/Teachings
+      'forum.title': 'Babul Ulum\'s Forum',
+      'forum.search.placeholder': 'Search...',
+      'forum.filter.clear': 'Clear filter',
+      'forum.featured': 'Featured',
+      'forum.noResults': 'No teachings found. Try a different search or filter.',
+      'forum.pagination.previous': 'Previous',
+      'forum.pagination.next': 'Next',
+      'forum.pagination.page': 'Page',
+      'forum.pagination.of': 'of',
+      'forum.loading': 'Loading teachings...',
+      
+      // Favorites
+      'favorites.show': 'Show Favorites',
+      'favorites.hide': 'Show All',
+      'favorites.add': 'Add to Favorites',
+      'favorites.remove': 'Remove from Favorites',
+      'favorites.empty': 'No favorite teachings yet.',
+      
+      // Comments
+      'comments.title': 'Comments',
+      'comments.add': 'Add Comment',
+      'comments.name': 'Name',
+      'comments.email': 'Email (optional)',
+      'comments.content': 'Comment',
+      'comments.submit': 'Post Comment',
+      'comments.anonymous': 'Anonymous',
+      'comments.delete': 'Delete',
+      'comments.deleteConfirm': 'Are you sure you want to delete this comment?',
+      'comments.empty': 'No comments yet. Be the first to comment!',
+      'comments.posted': 'Comment posted successfully!',
+      'comments.error': 'Failed to post comment. Please try again.',
+      'comments.deleted': 'Comment deleted successfully!',
+      
+      // Admin Actions
+      'admin.pin': 'Pin',
+      'admin.unpin': 'Unpin',
+      'admin.edit': 'Edit',
+      'admin.delete': 'Delete',
+      'admin.deleteConfirm': 'Are you sure you want to delete this teaching?',
+      'admin.pinned': 'Teaching pinned!',
+      'admin.unpinned': 'Teaching unpinned!',
+      'admin.deleted': 'Teaching deleted!',
+      
+      // Share
+      'share.whatsapp': 'WhatsApp',
+      'share.twitter': 'Twitter',
+      'share.copy': 'Copy Link',
+      'share.copied': 'Link copied!',
+      'share.title': 'Share',
+      
+      // Pagination
+      'pagination.previous': 'Previous',
+      'pagination.next': 'Next',
+      
+      // Forum additional
+      'forum.allTeachings': 'All Teachings',
+
+      // Tags (additional)
+      'tags.Guide': 'Guide',
+      'tags.wise': 'Wise',
+      'tags.Prayer': 'Prayer',
+      'tags.life': 'Life',
+      'tags.year': 'Year',
+      // Types (additional)
+      'types.Guide': 'Guide',
+      'types.wise': 'Wise',
+      'types.Prayer': 'Prayer',
+      'types.life': 'Life',
+      'types.year': 'Year',
     }
   },
   ar: {
@@ -156,6 +252,8 @@ const resources = {
       'nav.services': 'خدماتنا',
       'nav.contact': 'اتصل بنا',
       'nav.bookshop': 'المكتبة',
+      'nav.teachings': 'التعاليم',
+      'teachings.title': 'التعاليم',
       
       // Hero Section
       'hero.dua': 'اللهم صلى على سيد السادات السعادات الهدات والبركات',
@@ -211,7 +309,30 @@ const resources = {
       // Language Toggle
       'lang.en': 'English',
       'lang.ar': 'العربية',
-      
+      'nav.toggleLanguage': 'تبديل اللغة',
+
+      // Tags
+      'tags.faith': 'الإيمان',
+      'tags.spirituality': 'الروحانية',
+      'tags.prayer': 'الصلاة',
+      'tags.astrology': 'التنجيم',
+      'tags.guidance': 'الإرشاد',
+      'tags.education': 'التعليم',
+      'tags.community': 'المجتمع',
+      'tags.legacy': 'الإرث',
+      // Add more as needed
+
+      // Types
+      'types.article': 'مقالة',
+      'types.video': 'فيديو',
+      'types.audio': 'صوت',
+      'types.event': 'حدث',
+      // Add more as needed
+
+      // Comments Show More/Less
+      'comments.showMore': 'عرض المزيد من التعليقات',
+      'comments.showLess': 'إخفاء المزيد من التعليقات',
+
       // Additional Hero Section
       'hero.brand': 'باب العلم',
       'hero.subtitle': 'مركز التعليم الإسلامي',
@@ -240,19 +361,19 @@ const resources = {
       'founder.cta.button': 'ابدأ رحلتك',
       
       // Additional Services Section
-      'services.subtitle': 'اكتشف مجموعة خدماتنا الشاملة للتعلم الإسلامي والإرشاد الروحي',
+      'services.subtitle': 'اكتشف مجموعة شاملة من خدمات التعلم الإسلامي والإرشاد الروحي',
       
       // Additional Contact Section
       'contact.subtitle': 'تواصل معنا لمعرفة المزيد عن خدماتنا وبدء رحلتك الروحية',
       'contact.form.title': 'أرسل لنا رسالة',
       'contact.form.name.placeholder': 'اسمك',
-      'contact.form.email.placeholder': 'بريدك.الإلكتروني@مثال.com',
+      'contact.form.email.placeholder': 'your.email@example.com',
       'contact.form.message.placeholder': 'أخبرنا عن رحلتك الروحية وكيف يمكننا المساعدة...',
       
       // Footer Section
       'footer.brand': 'باب العلم',
       'footer.subtitle': 'مركز التعليم الإسلامي',
-      'footer.description': 'مركز تعليم إسلامي متميز للتنوير الروحي تأسس بواسطة ألفا بابا. مكرس لنشر المعرفة وتعزيز النمو الروحي.',
+      'footer.description': 'مركز تعليم إسلامي متميز للتنوير الروحي أسسه ألفا بابا. مكرس لنشر المعرفة وتعزيز النمو الروحي.',
       'footer.quickLinks': 'روابط سريعة',
       'footer.services': 'خدماتنا',
       'footer.contactInfo': 'معلومات الاتصال',
@@ -267,8 +388,8 @@ const resources = {
       
       // Additional About Section - Legacy
       'about.legacy.title': 'إرث من التميز',
-      'about.legacy.text1': 'تأسس بواسطة المحترم ألفا بابا، كان باب العلم في طليعة التعليم الإسلامي والإرشاد الروحي. يجمع مركزنا بين الحكمة الإسلامية التقليدية والنهج التعليمية الحديثة لتوفير تجربة تعليمية شاملة.',
-      'about.legacy.text2': 'نؤمن بقوة المعرفة في تحويل الحياة والمجتمعات. من خلال برامجنا المصممة بعناية ونهجنا الشخصي، نساعد الأفراد على تطوير ارتباط أعمق بإيمانهم وروحانيتهم.',
+      'about.legacy.text1': 'أسسه المحترم ألفا بابا، كان باب العلم في طليعة التعليم الإسلامي والإرشاد الروحي. يجمع مركزنا بين الحكمة الإسلامية التقليدية والنهج التعليمية الحديثة لتقديم تجربة تعلم شاملة.',
+      'about.legacy.text2': 'نؤمن بقوة المعرفة في تحويل الحياة والمجتمعات. من خلال برامجنا المصممة بعناية ونهجنا الشخصي، نساعد الأفراد على تطوير اتصال أعمق بإيمانهم وروحانيتهم.',
       'about.stats.students': 'طالب',
       'about.stats.years': 'سنوات',
       'about.stats.services': 'خدمات',
@@ -276,7 +397,7 @@ const resources = {
       'about.wisdom.subtitle': 'المعرفة التقليدية تلتقي بالفهم الحديث',
       
       // Additional Services Section - CTA
-      'services.cta.title': 'هل أنت مستعد لبدء رحلتك الروحية؟',
+      'services.cta.title': 'مستعد لبدء رحلتك الروحية؟',
       'services.cta.text': 'تواصل معنا لمعرفة المزيد عن خدماتنا وكيف يمكننا مساعدتك في طريقك إلى التنوير الروحي.',
       'services.cta.button': 'ابدأ اليوم',
       
@@ -287,11 +408,82 @@ const resources = {
       'contact.location.address': 'مركز التعليم الإسلامي',
       'contact.location.country': 'ولاية كوارا، نيجيريا',
       'contact.location.availability': 'متاح للاستشارات عبر الإنترنت والشخصية',
-      'contact.quick.title': 'هل أنت مستعد لبدء رحلتك؟',
+      'contact.quick.title': 'مستعد لبدء رحلتك؟',
       'contact.quick.text': 'لا تنتظر لبدء تحولك الروحي. تواصل معنا اليوم واتخذ الخطوة الأولى نحو التنوير.',
       'contact.quick.call': 'اتصل الآن',
       'contact.quick.whatsapp': 'واتساب',
       'contact.quick.email': 'البريد الإلكتروني',
+      
+      // Forum/Teachings
+      'forum.title': 'منتدى باب العلم',
+      'forum.search.placeholder': 'البحث...',
+      'forum.filter.clear': 'مسح الفلتر',
+      'forum.featured': 'مميز',
+      'forum.noResults': 'لم يتم العثور على تعاليم. جرب بحث أو فلتر مختلف.',
+      'forum.pagination.previous': 'السابق',
+      'forum.pagination.next': 'التالي',
+      'forum.pagination.page': 'صفحة',
+      'forum.pagination.of': 'من',
+      'forum.loading': 'جاري تحميل التعاليم...',
+      
+      // Favorites
+      'favorites.show': 'عرض المفضلة',
+      'favorites.hide': 'عرض الكل',
+      'favorites.add': 'إضافة إلى المفضلة',
+      'favorites.remove': 'إزالة من المفضلة',
+      'favorites.empty': 'لا توجد تعاليم مفضلة بعد.',
+      
+      // Comments
+      'comments.title': 'التعليقات',
+      'comments.add': 'إضافة تعليق',
+      'comments.name': 'الاسم',
+      'comments.email': 'البريد الإلكتروني (اختياري)',
+      'comments.content': 'التعليق',
+      'comments.submit': 'نشر التعليق',
+      'comments.anonymous': 'مجهول',
+      'comments.delete': 'حذف',
+      'comments.deleteConfirm': 'هل أنت متأكد من حذف هذا التعليق؟',
+      'comments.empty': 'لا توجد تعليقات بعد. كن أول من يعلق!',
+      'comments.posted': 'تم نشر التعليق بنجاح!',
+      'comments.error': 'فشل في نشر التعليق. يرجى المحاولة مرة أخرى.',
+      'comments.deleted': 'تم حذف التعليق بنجاح!',
+      
+      // Admin Actions
+      'admin.pin': 'تثبيت',
+      'admin.unpin': 'إلغاء التثبيت',
+      'admin.edit': 'تعديل',
+      'admin.delete': 'حذف',
+      'admin.deleteConfirm': 'هل أنت متأكد من حذف هذا التعليم؟',
+      'admin.pinned': 'تم تثبيت التعليم!',
+      'admin.unpinned': 'تم إلغاء تثبيت التعليم!',
+      'admin.deleted': 'تم حذف التعليم!',
+      
+      // Share
+      'share.whatsapp': 'واتساب',
+      'share.twitter': 'تويتر',
+      'share.copy': 'نسخ الرابط',
+      'share.copied': 'تم نسخ الرابط!',
+      'share.title': 'مشاركة',
+      
+      // Pagination
+      'pagination.previous': 'السابق',
+      'pagination.next': 'التالي',
+      
+      // Forum additional
+      'forum.allTeachings': 'جميع التعاليم',
+
+      // Tags (additional)
+      'tags.Guide': 'دليل',
+      'tags.wise': 'حكمة',
+      'tags.Prayer': 'صلاة',
+      'tags.life': 'الحياة',
+      'tags.year': 'سنة',
+      // Types (additional)
+      'types.Guide': 'دليل',
+      'types.wise': 'حكمة',
+      'types.Prayer': 'صلاة',
+      'types.life': 'الحياة',
+      'types.year': 'سنة',
     }
   }
 };
