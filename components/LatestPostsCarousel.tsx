@@ -127,8 +127,8 @@ export default function LatestPostsCarousel() {
       <div className="main-carousel-pagination flex justify-center items-center mt-4 mb-8" />
       {/* Modal overlay for post preview */}
       {modalPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-2 sm:px-0" style={{ direction: 'ltr' }} onClick={() => setModalPost(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xs sm:max-w-lg relative max-h-screen overflow-y-auto p-2 sm:p-6 flex flex-col items-center mx-auto" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setModalPost(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-screen overflow-y-auto p-4 sm:p-6 flex flex-col items-center" onClick={e => e.stopPropagation()}>
             {/* Close button above media for visibility */}
             <button onClick={() => setModalPost(null)} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl z-20 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200" aria-label="Close">×</button>
             {/* Media carousel */}
@@ -224,7 +224,7 @@ export default function LatestPostsCarousel() {
             <p className="text-gray-800 mb-4 whitespace-pre-line">{modalPost.content}</p>
             {/* Comments section */}
             <CommentsSection postId={modalPost._id} />
-            <button onClick={() => { setModalPost(null); router.push('/teachings'); }} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 rounded-lg shadow transition mt-2">{t('forum.allDailyUpdates') || 'Go to All Daily Updates'}</button>
+            <button onClick={() => { setModalPost(null); router.push('/teachings'); }} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 rounded-lg shadow transition mt-2">Go to All Teachings</button>
           </div>
         </div>
       )}

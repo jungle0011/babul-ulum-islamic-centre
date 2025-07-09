@@ -456,28 +456,28 @@ function TeachingsPageContent() {
                               slidesPerView={1}
                               navigation
                               pagination={{ clickable: true }}
-                              className="w-full h-32 sm:h-40 mb-2 rounded-lg bg-black"
+                              className="w-full h-40 mb-2 rounded-lg bg-black"
                               style={{ maxWidth: 320, maxHeight: 160 }}
                             >
                               {teaching.media.map((media, idx) => (
                                 <SwiperSlide key={idx}>
                                   {media.type === 'image' ? (
-                                    <img src={media.url ? media.url : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                                    <img src={media.url ? media.url : ''} alt="media" className="w-full h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
                                   ) : (
-                                    <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                                    <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
                                       <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                                      <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
+                                      <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
                                     </div>
                                   )}
                                 </SwiperSlide>
                               ))}
                             </Swiper>
                           ) : teaching.imageUrl ? (
-                            <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                            <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
                           ) : teaching.videoUrl ? (
-                            <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                            <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
                               <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                              <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
+                              <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
                             </div>
                           ) : null}
                           
@@ -589,28 +589,28 @@ function TeachingsPageContent() {
                               slidesPerView={1}
                               navigation
                               pagination={{ clickable: true }}
-                              className="w-full h-32 sm:h-40 mb-2 rounded-lg bg-black"
+                              className="w-full h-40 mb-2 rounded-lg bg-black"
                               style={{ maxWidth: 320, maxHeight: 160 }}
                             >
                               {teaching.media.map((media, idx) => (
                                 <SwiperSlide key={idx}>
                                   {media.type === 'image' ? (
-                                    <img src={media.url ? media.url : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                                    <img src={media.url ? media.url : ''} alt="media" className="w-full h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
                                   ) : (
-                                    <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                                    <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
                                       <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                                      <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
+                                      <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
                                     </div>
                                   )}
                                 </SwiperSlide>
                               ))}
                             </Swiper>
                           ) : teaching.imageUrl ? (
-                            <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                            <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
                           ) : teaching.videoUrl ? (
-                            <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                            <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
                               <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                              <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
+                              <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
                             </div>
                           ) : null}
                           
