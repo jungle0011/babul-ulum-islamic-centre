@@ -308,9 +308,9 @@ export default function AdminDashboard() {
                         ))}
                       </Swiper>
                     ) : article.imageUrl ? (
-                      <img src={getGoogleDriveDirectUrl(article.imageUrl)} alt="" className="w-28 h-28 object-cover rounded-lg border border-gray-200 shadow mb-2 cursor-pointer" onClick={() => setLightbox({ media: [{ url: article.imageUrl, type: 'image' }], index: 0 })} />
+                      <img src={getGoogleDriveDirectUrl(article.imageUrl || '')} alt="" className="w-28 h-28 object-cover rounded-lg border border-gray-200 shadow mb-2 cursor-pointer" onClick={() => setLightbox({ media: [{ url: article.imageUrl || '', type: 'image' }], index: 0 })} />
                     ) : article.videoUrl ? (
-                      <div className="w-28 h-28 flex items-center justify-center bg-black rounded-lg cursor-pointer" onClick={() => setLightbox({ media: [{ url: article.videoUrl, type: 'video' }], index: 0 })}>
+                      <div className="w-28 h-28 flex items-center justify-center bg-black rounded-lg cursor-pointer" onClick={() => setLightbox({ media: [{ url: article.videoUrl || '', type: 'video' }], index: 0 })}>
                         <span className="text-white text-3xl">🎬</span>
                       </div>
                     ) : null}
