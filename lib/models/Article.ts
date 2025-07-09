@@ -74,6 +74,15 @@ const ArticleSchema = new Schema({
     type: [CommentSchema],
     default: [],
   },
+  media: {
+    type: [
+      {
+        url: { type: String, required: true },
+        type: { type: String, enum: ['image', 'video'], required: true },
+      }
+    ],
+    default: [],
+  },
 });
 
 const Article = models.Article || mongoose.model('Article', ArticleSchema);

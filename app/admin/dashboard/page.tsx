@@ -2,6 +2,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { FaEdit, FaTrash, FaStar, FaRegStar, FaTimes } from 'react-icons/fa';
+import CloudinaryUpload from '../../../components/CloudinaryUpload';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore from 'swiper';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+SwiperCore.use([Navigation, Pagination]);
 
 interface Article {
   _id: string;
@@ -91,6 +99,14 @@ export default function AdminDashboard() {
   const allTags = Array.from(new Set(articles.flatMap(a => a.tags || [])));
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
 
+  // In the create form, use a single CloudinaryUpload for both images and videos, and show a preview gallery
+  const [mediaUrls, setMediaUrls] = useState<{ url: string, type: 'image' | 'video' }[]>([]);
+
+  // In the edit form, use a single CloudinaryUpload and show the same preview gallery
+  const [editMediaUrls, setEditMediaUrls] = useState<{ url: string, type: 'image' | 'video' }[]>([]);
+
+  const [lightbox, setLightbox] = useState<{ media: { url: string, type: 'image' | 'video' }[], index: number } | null>(null);
+
   const fetchArticles = async () => {
     const res = await fetch('/api/articles');
     const data = await res.json();
@@ -111,22 +127,20 @@ export default function AdminDashboard() {
       setLoading(false);
       return;
     }
-    const expandedVideoUrl = await expandTikTokLinkIfNeeded(videoUrl);
     const res = await fetch('/api/articles', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title,
         content,
-        imageUrl,
-        videoUrl: expandedVideoUrl,
+        media: mediaUrls,
         tags: tags.split(',').map(t => t.trim()).filter(Boolean),
         pinned,
       }),
     });
     setLoading(false);
     if (res.ok) {
-      setTitle(''); setContent(''); setImageUrl(''); setVideoUrl(''); setTags(''); setPinned(false);
+      setTitle(''); setContent(''); setMediaUrls([]); setTags(''); setPinned(false);
       setSuccess('Teaching created successfully!');
       fetchArticles();
     } else {
@@ -149,6 +163,15 @@ export default function AdminDashboard() {
     setEditVideoUrl(article.videoUrl || '');
     setEditPinned(!!article.pinned);
     setEditTags(article.tags ? article.tags.join(', ') : '');
+    // NEW: Initialize editMediaUrls from article.media, or fallback
+    if (Array.isArray((article as any).media) && (article as any).media.length > 0) {
+      setEditMediaUrls((article as any).media.map((m: any) => ({ url: m.url, type: m.type as 'image' | 'video' })));
+    } else {
+      const arr: { url: string; type: 'image' | 'video' }[] = [];
+      if (article.imageUrl) arr.push({ url: article.imageUrl, type: 'image' });
+      if (article.videoUrl) arr.push({ url: article.videoUrl, type: 'video' });
+      setEditMediaUrls(arr);
+    }
   };
 
   const handleEdit = async (e: React.FormEvent) => {
@@ -156,15 +179,13 @@ export default function AdminDashboard() {
     if (!editingId) return;
     setLoading(true);
     setError('');
-    const expandedVideoUrl = await expandTikTokLinkIfNeeded(editVideoUrl);
     const res = await fetch(`/api/articles/${editingId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         title: editTitle,
         content: editContent,
-        imageUrl: editImageUrl,
-        videoUrl: expandedVideoUrl,
+        media: editMediaUrls,
         tags: editTags.split(',').map(t => t.trim()).filter(Boolean),
         pinned: editPinned,
       }),
@@ -219,8 +240,25 @@ export default function AdminDashboard() {
             <form onSubmit={handleCreate} className="space-y-4">
               <input type="text" placeholder="Title *" value={title} onChange={e => setTitle(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-base" required />
               <textarea placeholder="Content *" value={content} onChange={e => setContent(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-base" rows={4} required />
-              <input type="text" placeholder="Image URL (optional)" value={imageUrl} onChange={e => setImageUrl(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-base" />
-              <input type="text" placeholder="Video URL (optional)" value={videoUrl} onChange={e => setVideoUrl(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-base" />
+              <CloudinaryUpload
+                onUpload={(url: string, type: 'image' | 'video') => setMediaUrls(prev => [...prev, { url, type }])}
+                resourceType="auto"
+                uploadPreset="unsigned_preset"
+                cloudName="dl3ew7b06"
+                multiple={true}
+              />
+              <div className="flex flex-wrap gap-4 mt-4">
+                {mediaUrls.map((media, idx) => (
+                  <div key={idx} className="relative">
+                    {media.type === 'image' ? (
+                      <img src={media.url} alt="preview" className="w-24 h-24 object-cover rounded shadow border" />
+                    ) : (
+                      <video src={media.url} controls className="w-24 h-24 object-cover rounded shadow border" />
+                    )}
+                    <button type="button" onClick={() => setMediaUrls(prev => prev.filter((_, i) => i !== idx))} className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">×</button>
+                  </div>
+                ))}
+              </div>
               <input type="text" placeholder="Tags (comma separated) *" value={tags} onChange={e => { setTags(e.target.value); const input = e.target.value.split(',').pop()?.trim().toLowerCase() || ''; setTagSuggestions(input ? allTags.filter(t => t.toLowerCase().startsWith(input) && !tags.split(',').map(t => t.trim().toLowerCase()).includes(t.toLowerCase())) : []); }} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-base" required />
               {tagSuggestions.length > 0 && (
                 <div className="bg-gray-50 border rounded shadow p-2 flex flex-wrap gap-2">
@@ -248,14 +286,34 @@ export default function AdminDashboard() {
               {filteredArticles.map(article => (
                 <li key={article._id} className="bg-gradient-to-br from-white via-yellow-50 to-white p-4 rounded-2xl shadow-md hover:shadow-xl border border-yellow-100 transition-all duration-200 flex flex-col md:flex-row gap-4 items-start md:items-center">
                   <div className="flex flex-col items-center w-32 min-w-[8rem]">
-                    {article.imageUrl && (
-                      <img src={getGoogleDriveDirectUrl(article.imageUrl)} alt="" className="w-28 h-28 object-cover rounded-lg border border-gray-200 shadow mb-2" onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = ''; e.currentTarget.alt = 'Image failed to load. Try another host or check Google Drive permissions.'; }} />
-                    )}
-                    {article.videoUrl && (
-                      <div className="w-28 h-16 bg-black rounded-lg flex items-center justify-center mt-1">
-                        <span className="text-white text-xl">🎬</span>
+                    {Array.isArray((article as any).media) && (article as any).media.length > 0 ? (
+                      <Swiper
+                        spaceBetween={8}
+                        slidesPerView={1}
+                        navigation
+                        pagination={{ clickable: true }}
+                        className="w-28 h-28 mb-2 rounded-lg bg-black"
+                        style={{ maxWidth: 112, maxHeight: 112 }}
+                      >
+                        {(article as any).media.map((media: any, idx: number) => (
+                          <SwiperSlide key={idx}>
+                            {media.type === 'image' ? (
+                              <img src={media.url} alt="media" className="w-28 h-28 object-cover rounded-lg cursor-pointer" onClick={() => setLightbox({ media: (article as any).media, index: idx })} />
+                            ) : (
+                              <div className="w-28 h-28 flex items-center justify-center bg-black rounded-lg cursor-pointer" onClick={() => setLightbox({ media: (article as any).media, index: idx })}>
+                                <span className="text-white text-3xl">🎬</span>
+                              </div>
+                            )}
+                          </SwiperSlide>
+                        ))}
+                      </Swiper>
+                    ) : article.imageUrl ? (
+                      <img src={getGoogleDriveDirectUrl(article.imageUrl)} alt="" className="w-28 h-28 object-cover rounded-lg border border-gray-200 shadow mb-2 cursor-pointer" onClick={() => setLightbox({ media: [{ url: article.imageUrl, type: 'image' }], index: 0 })} />
+                    ) : article.videoUrl ? (
+                      <div className="w-28 h-28 flex items-center justify-center bg-black rounded-lg cursor-pointer" onClick={() => setLightbox({ media: [{ url: article.videoUrl, type: 'video' }], index: 0 })}>
+                        <span className="text-white text-3xl">🎬</span>
                       </div>
-                    )}
+                    ) : null}
                     {article.pinned ? (
                       <span className="mt-2 inline-flex items-center gap-1 bg-yellow-400 text-white text-xs font-bold px-2 py-1 rounded-full"><FaStar className="inline" /> Featured</span>
                     ) : null}
@@ -288,8 +346,25 @@ export default function AdminDashboard() {
             <form onSubmit={handleEdit} className="space-y-4">
               <input type="text" value={editTitle} onChange={e => setEditTitle(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-base" required />
               <textarea value={editContent} onChange={e => setEditContent(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-base" rows={4} required />
-              <input type="text" value={editImageUrl} onChange={e => setEditImageUrl(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-base" placeholder="Image URL (optional)" />
-              <input type="text" value={editVideoUrl} onChange={e => setEditVideoUrl(e.target.value)} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-base" placeholder="Video URL (optional)" />
+              <CloudinaryUpload
+                onUpload={(url: string, type: 'image' | 'video') => setEditMediaUrls((prev: { url: string, type: 'image' | 'video' }[]) => [...prev, { url, type }])}
+                resourceType="auto"
+                uploadPreset="unsigned_preset"
+                cloudName="dl3ew7b06"
+                multiple={true}
+              />
+              <div className="flex flex-wrap gap-4 mt-4">
+                {editMediaUrls.map((media: { url: string, type: 'image' | 'video' }, idx: number) => (
+                  <div key={idx} className="relative">
+                    {media.type === 'image' ? (
+                      <img src={media.url} alt="preview" className="w-24 h-24 object-cover rounded shadow border" />
+                    ) : (
+                      <video src={media.url} controls className="w-24 h-24 object-cover rounded shadow border" />
+                    )}
+                    <button type="button" onClick={() => setEditMediaUrls((prev: { url: string, type: 'image' | 'video' }[]) => prev.filter((_, i) => i !== idx))} className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">×</button>
+                  </div>
+                ))}
+              </div>
               <input type="text" value={editTags} onChange={e => { setEditTags(e.target.value); const input = e.target.value.split(',').pop()?.trim().toLowerCase() || ''; setTagSuggestions(input ? allTags.filter(t => t.toLowerCase().startsWith(input) && !e.target.value.split(',').map(t => t.trim().toLowerCase()).includes(t.toLowerCase())) : []); }} className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none text-base" placeholder="Tags (comma separated)" />
               {tagSuggestions.length > 0 && (
                 <div className="bg-gray-50 border rounded shadow p-2 flex flex-wrap gap-2">
@@ -307,6 +382,38 @@ export default function AdminDashboard() {
                 <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold" disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {lightbox && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setLightbox(null)}>
+          <div className="relative bg-white rounded-lg shadow-lg max-w-xl w-full mx-4 p-4 pt-10 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            <button
+              onClick={() => setLightbox(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-yellow-500 text-2xl font-bold z-10 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <Swiper
+              spaceBetween={8}
+              slidesPerView={1}
+              navigation
+              pagination={{ clickable: true }}
+              initialSlide={lightbox.index}
+              className="w-full max-w-lg h-64 mb-4 rounded-lg bg-black"
+              style={{ maxWidth: 480, maxHeight: 256 }}
+            >
+              {lightbox.media.map((media, idx) => (
+                <SwiperSlide key={idx}>
+                  {media.type === 'image' ? (
+                    <img src={media.url} alt="media" className="w-full h-64 object-contain rounded-lg" />
+                  ) : (
+                    <video src={media.url} controls autoPlay className="w-full h-64 object-contain rounded-lg" />
+                  )}
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </div>
       )}

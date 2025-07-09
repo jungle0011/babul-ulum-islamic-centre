@@ -4,6 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { LanguageProvider, useLanguage } from '@/components/LanguageProvider';
 import { motion } from 'framer-motion';
 import { FaPlayCircle } from 'react-icons/fa';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import SwiperCore from 'swiper';
+import { Navigation, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+SwiperCore.use([Navigation, Pagination]);
 
 interface Comment {
   _id?: string;
@@ -30,6 +37,25 @@ interface Teaching {
   content_ar?: string;
   author_ar?: string;
   videoUrl?: string;
+  media?: { type: 'image' | 'video', url: string }[];
+}
+
+// Move expandTikTokLinkIfNeeded to the top level
+async function expandTikTokLinkIfNeeded(url: string): Promise<string> {
+  if (url.startsWith('https://vm.tiktok.com/')) {
+    try {
+      const res = await fetch('/api/tiktok/expand', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+      const data = await res.json();
+      return data.expandedUrl || url;
+    } catch {
+      return url;
+    }
+  }
+  return url;
 }
 
 export default function TeachingsPage() {
@@ -60,7 +86,7 @@ function TeachingsPageContent() {
   const [page, setPage] = useState(1);
   const perPage = 6;
   // Add state for lightbox
-  const [lightbox, setLightbox] = useState<{ type: 'image' | 'video' | 'tiktok', src: string } | null>(null);
+  const [lightbox, setLightbox] = useState<{ media: { url: string, type: 'image' | 'video' }[], index: number } | null>(null);
 
   // Check admin status
   useEffect(() => {
@@ -420,20 +446,36 @@ function TeachingsPageContent() {
                         </button>
 
                         {/* Display image and video */}
-                        {teaching.imageUrl && (
-                          <img
-                            src={getGoogleDriveDirectUrl(teaching.imageUrl)}
-                            alt={teaching.title}
-                            className="w-full h-40 object-contain rounded-lg mb-2 bg-white"
-                            style={{ maxHeight: 160 }}
-                          />
-                        )}
-                        {teaching.videoUrl && (
-                          <div className="w-full h-40 bg-black rounded-lg flex items-center justify-center mb-2 overflow-hidden">
-                            {/* Show a play icon overlay for video preview, do not load iframe or video yet */}
-                            <span className="text-white text-3xl">▶</span>
+                        {(teaching.media && teaching.media.length > 0) ? (
+                          <Swiper
+                            spaceBetween={8}
+                            slidesPerView={1}
+                            navigation
+                            pagination={{ clickable: true }}
+                            className="w-full h-40 mb-2 rounded-lg bg-black"
+                            style={{ maxWidth: 320, maxHeight: 160 }}
+                          >
+                            {teaching.media.map((media, idx) => (
+                              <SwiperSlide key={idx}>
+                                {media.type === 'image' ? (
+                                  <img src={media.url ? media.url : ''} alt="media" className="w-full h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                                ) : (
+                                  <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                                    <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
+                                    <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
+                                  </div>
+                                )}
+                              </SwiperSlide>
+                            ))}
+                          </Swiper>
+                        ) : teaching.imageUrl ? (
+                          <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                        ) : teaching.videoUrl ? (
+                          <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                            <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
+                            <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
                           </div>
-                        )}
+                        ) : null}
                         
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
                           {teaching.type && (
@@ -524,20 +566,36 @@ function TeachingsPageContent() {
                         </button>
 
                         {/* Display image and video */}
-                        {teaching.imageUrl && (
-                          <img
-                            src={getGoogleDriveDirectUrl(teaching.imageUrl)}
-                            alt={teaching.title}
-                            className="w-full h-40 object-contain rounded-lg mb-2 bg-white"
-                            style={{ maxHeight: 160 }}
-                          />
-                        )}
-                        {teaching.videoUrl && (
-                          <div className="w-full h-40 bg-black rounded-lg flex items-center justify-center mb-2 overflow-hidden">
-                            {/* Show a play icon overlay for video preview, do not load iframe or video yet */}
-                            <span className="text-white text-3xl">▶</span>
+                        {(teaching.media && teaching.media.length > 0) ? (
+                          <Swiper
+                            spaceBetween={8}
+                            slidesPerView={1}
+                            navigation
+                            pagination={{ clickable: true }}
+                            className="w-full h-40 mb-2 rounded-lg bg-black"
+                            style={{ maxWidth: 320, maxHeight: 160 }}
+                          >
+                            {teaching.media.map((media, idx) => (
+                              <SwiperSlide key={idx}>
+                                {media.type === 'image' ? (
+                                  <img src={media.url ? media.url : ''} alt="media" className="w-full h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                                ) : (
+                                  <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                                    <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
+                                    <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
+                                  </div>
+                                )}
+                              </SwiperSlide>
+                            ))}
+                          </Swiper>
+                        ) : teaching.imageUrl ? (
+                          <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                        ) : teaching.videoUrl ? (
+                          <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                            <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
+                            <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
                           </div>
-                        )}
+                        ) : null}
                         
                         <div className="flex items-center gap-2 mb-2 flex-wrap">
                           {teaching.type && (
@@ -615,7 +673,7 @@ function TeachingsPageContent() {
       {/* Read More Modal */}
       {modalTeaching && (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70" onClick={() => setModalTeaching(null)}>
-          <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6 pt-10" onClick={e => e.stopPropagation()}>
+          <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6 pt-10 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <button
               onClick={() => setModalTeaching(null)}
               className="absolute top-6 right-6 text-gray-400 hover:text-yellow-500 text-2xl font-bold z-10 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"
@@ -626,30 +684,30 @@ function TeachingsPageContent() {
 
             {/* Media preview */}
             <div className="mb-4 flex flex-col justify-center items-center gap-4 mt-2">
-              {modalTeaching.imageUrl && (
-                <img
-                  src={modalTeaching.imageUrl}
-                  alt={modalTeaching.title}
-                  className="max-h-64 rounded cursor-zoom-in object-contain"
-                  onClick={() => setLightbox({ type: 'image', src: modalTeaching.imageUrl! })}
-                />
-              )}
-              {modalTeaching.videoUrl && (
-                <div
-                  className="relative w-64 h-40 bg-gray-200 dark:bg-gray-800 rounded flex items-center justify-center cursor-pointer group"
-                  onClick={() => {
-                    const url = getGoogleDriveDirectUrl(modalTeaching.videoUrl || '');
-                    if (isTikTokUrl(url)) {
-                      setLightbox({ type: 'tiktok', src: getTikTokEmbedUrl(url) });
-                    } else if (isYouTubeUrl(url) || isVimeoUrl(url) || isFacebookUrl(url) || url.match(/\.(mp4|webm|ogg)$/)) {
-                      setLightbox({ type: 'video', src: url });
-                    }
-                  }}
-                  title="Play video"
+              {(modalTeaching.media && modalTeaching.media.length > 0) ? (
+                <Swiper
+                  spaceBetween={8}
+                  slidesPerView={1}
+                  navigation
+                  pagination={{ clickable: true }}
+                  className="w-full max-w-lg h-64 mb-4 rounded-lg bg-black"
+                  style={{ maxWidth: 480, maxHeight: 256 }}
                 >
-                  {/* Play icon overlay */}
-                  <FaPlayCircle className="text-white text-6xl drop-shadow-lg opacity-90 group-hover:scale-110 transition-transform" style={{ filter: 'drop-shadow(0 2px 8px #000)' }} />
-                </div>
+                  {modalTeaching.media.map((media, idx) => (
+                    <SwiperSlide key={idx}>
+                      {media.type === 'image' ? (
+                        <img src={media.url ? media.url : ''} alt="media" className="w-full h-64 object-contain rounded-lg cursor-pointer" onClick={() => setLightbox({ media: modalTeaching.media!, index: idx })} />
+                      ) : (
+                        <div className="w-full h-64 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={() => setLightbox({ media: modalTeaching.media!, index: idx })}>
+                          <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
+                          <img src="/video-thumb.png" alt="video" className="w-full h-64 object-contain rounded-lg opacity-60" />
+                        </div>
+                      )}
+                    </SwiperSlide>
+                  ))}
+                </Swiper>
+              ) : (
+                <div className="w-full h-64 flex items-center justify-center bg-blue-900/80 rounded-lg text-yellow-300 text-2xl font-bold">No Media</div>
               )}
             </div>
 
@@ -841,67 +899,34 @@ function TeachingsPageContent() {
 
       {/* Lightbox overlay */}
       {lightbox && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95" style={{overflowY: 'auto'}} onClick={() => setLightbox(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" style={{overflowY: 'auto'}} onClick={() => setLightbox(null)}>
           <button className="absolute top-6 right-6 text-white text-3xl font-bold z-10 bg-black/60 rounded-full w-10 h-10 flex items-center justify-center" aria-label="Close">×</button>
-          {lightbox.type === 'image' && (
-            <img src={lightbox.src} alt="Full" className="max-w-full max-h-full object-contain rounded-lg" />
-          )}
-          {lightbox.type === 'video' && (
-            isYouTubeUrl(lightbox.src) ? (
-              <iframe
-                src={lightbox.src}
-                width="90%"
-                height="80%"
-                style={{ minWidth: 320, minHeight: 180, maxWidth: 900, maxHeight: 600 }}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                title="YouTube video player"
-                className="rounded bg-black"
-              />
-            ) : isVimeoUrl(lightbox.src) ? (
-              <iframe
-                src={lightbox.src}
-                width="90%"
-                height="80%"
-                style={{ minWidth: 320, minHeight: 180, maxWidth: 900, maxHeight: 600 }}
-                frameBorder="0"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-                title="Vimeo video player"
-                className="rounded bg-black"
-              />
-            ) : isFacebookUrl(lightbox.src) ? (
-              <iframe
-                src={getFacebookEmbedUrl(lightbox.src)}
-                width="560"
-                height="315"
-                style={{ minWidth: 320, minHeight: 180, maxWidth: 900, maxHeight: 600 }}
-                frameBorder="0"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-                title="Facebook video player"
-                className="rounded bg-black"
-              />
-            ) : (
-              <video src={lightbox.src} controls autoPlay className="max-w-full max-h-full rounded-lg bg-black" />
-            )
-          )}
-          {lightbox.type === 'tiktok' && (
-            <div className="flex flex-col items-center justify-center w-full h-full">
-              <iframe
-                src={lightbox.src}
-                width="340"
-                height="600"
-                frameBorder="0"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-                title="TikTok video player"
-                className="rounded bg-black"
-                style={{ maxWidth: 340, maxHeight: 600, margin: 'auto' }}
-              />
-            </div>
-          )}
+          <Swiper
+            spaceBetween={8}
+            slidesPerView={1}
+            navigation
+            pagination={{ clickable: true }}
+            initialSlide={lightbox.index}
+            onSlideChange={swiper => setLightbox({ ...lightbox, index: swiper.activeIndex })}
+            className="w-full max-w-lg h-64 mb-4 rounded-lg bg-black"
+            style={{ maxWidth: 480, maxHeight: 256 }}
+          >
+            {lightbox.media.map((media, idx) => (
+              <SwiperSlide key={idx}>
+                {media.type === 'image' ? (
+                  <img src={media.url ? media.url : ''} alt="media" className="w-full h-64 object-contain rounded-lg" />
+                ) : (
+                  lightbox.index === idx ? (
+                    <video src={media.url ? media.url : ''} controls autoPlay className="w-full h-64 object-contain rounded-lg" />
+                  ) : (
+                    <div className="w-full h-64 flex items-center justify-center bg-black rounded-lg">
+                      <span className="text-white text-5xl">▶️</span>
+                    </div>
+                  )
+                )}
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
       )}
     </div>
@@ -945,5 +970,34 @@ function LanguageToggleButton() {
         </span>
       </div>
     </motion.button>
+  );
+} 
+
+function TikTokPreview({ videoUrl, setLightbox }: { videoUrl: string, setLightbox: any }) {
+  const [expandedUrl, setExpandedUrl] = React.useState(videoUrl);
+  React.useEffect(() => {
+    expandTikTokLinkIfNeeded(videoUrl).then(setExpandedUrl);
+  }, [videoUrl]);
+  const isTikTok = /tiktok\.com\//.test(expandedUrl);
+  const match = expandedUrl.match(/tiktok\.com\/.*video\/(\d+)/);
+  const embedUrl = match ? `https://www.tiktok.com/embed/${match[1]}` : '';
+  return (
+    <div
+      className="relative w-64 h-40 bg-gray-200 dark:bg-gray-800 rounded flex items-center justify-center cursor-pointer group"
+      onClick={() => {
+        if (isTikTok && embedUrl) {
+          setLightbox({ type: 'tiktok', src: embedUrl });
+        } else {
+          setLightbox({ type: 'video', src: expandedUrl });
+        }
+      }}
+      title="Play video"
+    >
+      {/* Play icon overlay */}
+      <FaPlayCircle className="text-white text-6xl drop-shadow-lg opacity-90 group-hover:scale-110 transition-transform" style={{ filter: 'drop-shadow(0 2px 8px #000)' }} />
+      {!isTikTok && (
+        <span className="absolute bottom-2 left-2 text-xs text-red-500">Invalid TikTok link</span>
+      )}
+    </div>
   );
 } 
