@@ -183,6 +183,8 @@ const resources = {
       'forum.pagination.page': 'Page',
       'forum.pagination.of': 'of',
       'forum.loading': 'Loading teachings...',
+      'forum.viewAllFeatured': 'View All Featured',
+      'forum.viewAllTeachings': 'View All Teachings',
       
       // Favorites
       'favorites.show': 'Show Favorites',
@@ -426,6 +428,8 @@ const resources = {
       'forum.pagination.page': 'صفحة',
       'forum.pagination.of': 'من',
       'forum.loading': 'جاري تحميل التعاليم...',
+      'forum.viewAllFeatured': 'عرض جميع المميزة',
+      'forum.viewAllTeachings': 'عرض جميع التعاليم',
       
       // Favorites
       'favorites.show': 'عرض المفضلة',

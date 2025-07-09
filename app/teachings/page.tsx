@@ -87,6 +87,10 @@ function TeachingsPageContent() {
   const perPage = 6;
   // Add state for lightbox
   const [lightbox, setLightbox] = useState<{ media: { url: string, type: 'image' | 'video' }[], index: number } | null>(null);
+  // Add state for showAllFeatured and showAllRegular
+  const [showAllFeatured, setShowAllFeatured] = useState(false);
+  const [showAllRegular, setShowAllRegular] = useState(false);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
 
   // Check admin status
   useEffect(() => {
@@ -405,117 +409,130 @@ function TeachingsPageContent() {
                   <h2 className="text-2xl font-bold mb-6 text-white text-center">
                     {t('forum.featured') || 'Featured Teachings'}
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredFeatured.map((teaching) => (
-                      <div 
-                        key={teaching._id} 
-                        className="bg-white/90 rounded-xl shadow-lg p-3 sm:p-6 cursor-pointer hover:shadow-xl transition-all duration-300 group relative border-2 border-yellow-400 max-w-xs w-full mx-auto"
-                        onClick={() => handleOpenModal(teaching)}
-                      >
-                        {/* Admin Actions */}
-                        {isAdmin && (
-                          <div className="absolute top-2 right-2 z-10 flex gap-1">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handlePinToggle(teaching._id, true); }}
-                              className="bg-yellow-400 text-white p-1 rounded text-xs hover:bg-yellow-500 transition"
-                              title={t('admin.unpin') || 'Unpin'}
-                            >
-                              📌
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleDeleteTeaching(teaching._id); }}
-                              className="bg-red-500 text-white p-1 rounded text-xs hover:bg-red-600 transition"
-                              title={t('admin.delete') || 'Delete'}
-                            >
-                              🗑️
-                            </button>
-                          </div>
-                        )}
-
-                        {/* Favorite Button */}
-                        <button
-                          onClick={(e) => { e.stopPropagation(); toggleFavorite(teaching._id); }}
-                          className={`absolute top-2 left-2 z-10 p-1 rounded text-lg transition ${
-                            favorites.includes(teaching._id) 
-                              ? 'text-yellow-400' 
-                              : 'text-gray-400 hover:text-yellow-400'
-                          }`}
-                          title={favorites.includes(teaching._id) ? (t('favorites.remove') || 'Remove from favorites') : (t('favorites.add') || 'Add to favorites')}
+                  <div className="relative">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 transition-all duration-300">
+                      {(isMobile && !showAllFeatured ? filteredFeatured.slice(0, 1) : filteredFeatured).map((teaching) => (
+                        <div 
+                          key={teaching._id} 
+                          className="bg-white/90 rounded-xl shadow-lg p-3 sm:p-6 cursor-pointer hover:shadow-xl transition-all duration-300 group relative border-2 border-yellow-400 max-w-xs w-full mx-auto"
+                          onClick={() => handleOpenModal(teaching)}
                         >
-                          {favorites.includes(teaching._id) ? '★' : '☆'}
-                        </button>
-
-                        {/* Display image and video */}
-                        {(teaching.media && teaching.media.length > 0) ? (
-                          <Swiper
-                            spaceBetween={8}
-                            slidesPerView={1}
-                            navigation
-                            pagination={{ clickable: true }}
-                            className="w-full h-32 sm:h-40 mb-2 rounded-lg bg-black"
-                            style={{ maxWidth: 320, maxHeight: 160 }}
-                          >
-                            {teaching.media.map((media, idx) => (
-                              <SwiperSlide key={idx}>
-                                {media.type === 'image' ? (
-                                  <img src={media.url ? media.url : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
-                                ) : (
-                                  <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
-                                    <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                                    <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
-                                  </div>
-                                )}
-                              </SwiperSlide>
-                            ))}
-                          </Swiper>
-                        ) : teaching.imageUrl ? (
-                          <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
-                        ) : teaching.videoUrl ? (
-                          <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
-                            <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                            <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
-                          </div>
-                        ) : null}
-                        
-                        <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          {teaching.type && (
-                            <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">
-                              {t('types.' + teaching.type) || teaching.type}
-                            </span>
+                          {/* Admin Actions */}
+                          {isAdmin && (
+                            <div className="absolute top-2 right-2 z-10 flex gap-1">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handlePinToggle(teaching._id, true); }}
+                                className="bg-yellow-400 text-white p-1 rounded text-xs hover:bg-yellow-500 transition"
+                                title={t('admin.unpin') || 'Unpin'}
+                              >
+                                📌
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleDeleteTeaching(teaching._id); }}
+                                className="bg-red-500 text-white p-1 rounded text-xs hover:bg-red-600 transition"
+                                title={t('admin.delete') || 'Delete'}
+                              >
+                                🗑️
+                              </button>
+                            </div>
                           )}
-                          {Array.isArray(teaching.tags) && teaching.tags.length > 0 && teaching.tags.map((tag: string) => (
-                            <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">
-                              {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
-                            </span>
-                          ))}
-                          <span className="bg-yellow-400 text-white px-2 py-1 rounded text-xs font-bold ml-auto">
-                            {t('forum.featured') || 'Featured'}
-                          </span>
-                        </div>
-                        
-                        <h2 className="text-base sm:text-xl font-bold mb-2 text-blue-900 group-hover:text-yellow-600 transition-colors duration-200">
-                          {language === 'ar' && teaching.title_ar ? teaching.title_ar : teaching.title}
-                        </h2>
-                        <div className="text-xs text-gray-400 mb-2">
-                          {new Date(teaching.date).toLocaleDateString(language)}
-                        </div>
-                        <p className="text-gray-700 line-clamp-3">
-                          {language === 'ar' && teaching.content_ar ? teaching.content_ar : teaching.content}
-                        </p>
-                        
-                        {teaching.author && (
-                          <div className="flex items-center gap-2 mt-2">
-                            {teaching.authorAvatar && (
-                              <img src={teaching.authorAvatar} alt={teaching.author} className="w-7 h-7 rounded-full object-cover" />
+
+                          {/* Favorite Button */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleFavorite(teaching._id); }}
+                            className={`absolute top-2 left-2 z-10 p-1 rounded text-lg transition ${
+                              favorites.includes(teaching._id) 
+                                ? 'text-yellow-400' 
+                                : 'text-gray-400 hover:text-yellow-400'
+                            }`}
+                            title={favorites.includes(teaching._id) ? (t('favorites.remove') || 'Remove from favorites') : (t('favorites.add') || 'Add to favorites')}
+                          >
+                            {favorites.includes(teaching._id) ? '★' : '☆'}
+                          </button>
+
+                          {/* Display image and video */}
+                          {(teaching.media && teaching.media.length > 0) ? (
+                            <Swiper
+                              spaceBetween={8}
+                              slidesPerView={1}
+                              navigation
+                              pagination={{ clickable: true }}
+                              className="w-full h-32 sm:h-40 mb-2 rounded-lg bg-black"
+                              style={{ maxWidth: 320, maxHeight: 160 }}
+                            >
+                              {teaching.media.map((media, idx) => (
+                                <SwiperSlide key={idx}>
+                                  {media.type === 'image' ? (
+                                    <img src={media.url ? media.url : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                                  ) : (
+                                    <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                                      <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
+                                      <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
+                                    </div>
+                                  )}
+                                </SwiperSlide>
+                              ))}
+                            </Swiper>
+                          ) : teaching.imageUrl ? (
+                            <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                          ) : teaching.videoUrl ? (
+                            <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                              <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
+                              <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
+                            </div>
+                          ) : null}
+                          
+                          <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            {teaching.type && (
+                              <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">
+                                {t('types.' + teaching.type) || teaching.type}
+                              </span>
                             )}
-                            <span className="text-xs text-gray-500">
-                              {t('by')} {language === 'ar' && teaching.author_ar ? teaching.author_ar : teaching.author}
+                            {Array.isArray(teaching.tags) && teaching.tags.length > 0 && teaching.tags.map((tag: string) => (
+                              <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">
+                                {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
+                              </span>
+                            ))}
+                            <span className="bg-yellow-400 text-white px-2 py-1 rounded text-xs font-bold ml-auto">
+                              {t('forum.featured') || 'Featured'}
                             </span>
                           </div>
-                        )}
-                      </div>
-                    ))}
+                          
+                          <h2 className="text-base sm:text-xl font-bold mb-2 text-blue-900 group-hover:text-yellow-600 transition-colors duration-200">
+                            {language === 'ar' && teaching.title_ar ? teaching.title_ar : teaching.title}
+                          </h2>
+                          <div className="text-xs text-gray-400 mb-2">
+                            {new Date(teaching.date).toLocaleDateString(language)}
+                          </div>
+                          <p className="text-gray-700 line-clamp-3">
+                            {language === 'ar' && teaching.content_ar ? teaching.content_ar : teaching.content}
+                          </p>
+                          
+                          {teaching.author && (
+                            <div className="flex items-center gap-2 mt-2">
+                              {teaching.authorAvatar && (
+                                <img src={teaching.authorAvatar} alt={teaching.author} className="w-7 h-7 rounded-full object-cover" />
+                              )}
+                              <span className="text-xs text-gray-500">
+                                {t('by')} {language === 'ar' && teaching.author_ar ? teaching.author_ar : teaching.author}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    {isMobile && !showAllFeatured && filteredFeatured.length > 1 && (
+                      <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white/90 to-transparent pointer-events-none rounded-b-xl" />
+                    )}
                   </div>
+                  {isMobile && filteredFeatured.length > 1 && (
+                    <button
+                      className="block mx-auto mt-4 px-6 py-2 rounded-full bg-yellow-400 text-white font-bold shadow-lg hover:bg-yellow-500 transition text-base"
+                      onClick={() => setShowAllFeatured(true)}
+                    >
+                      {t('forum.viewAllFeatured') || 'View All Featured'}
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -525,136 +542,126 @@ function TeachingsPageContent() {
                   <h2 className="text-2xl font-bold mb-6 text-white text-center">
                     {t('forum.allTeachings') || 'All Teachings'}
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    {paginatedRegular.map((teaching) => (
-                      <div 
-                        key={teaching._id} 
-                        className="bg-white/90 rounded-xl shadow p-3 sm:p-6 cursor-pointer hover:shadow-lg transition-all duration-300 group relative"
-                        onClick={() => handleOpenModal(teaching)}
-                      >
-                        {/* Admin Actions */}
-                        {isAdmin && (
-                          <div className="absolute top-2 right-2 z-10 flex gap-1">
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handlePinToggle(teaching._id, false); }}
-                              className="bg-gray-400 text-white p-1 rounded text-xs hover:bg-gray-500 transition"
-                              title={t('admin.pin') || 'Pin'}
-                            >
-                              📌
-                            </button>
-                            <button
-                              onClick={(e) => { e.stopPropagation(); handleDeleteTeaching(teaching._id); }}
-                              className="bg-red-500 text-white p-1 rounded text-xs hover:bg-red-600 transition"
-                              title={t('admin.delete') || 'Delete'}
-                            >
-                              🗑️
-                            </button>
-                          </div>
-                        )}
-
-                        {/* Favorite Button */}
-                        <button
-                          onClick={(e) => { e.stopPropagation(); toggleFavorite(teaching._id); }}
-                          className={`absolute top-2 left-2 z-10 p-1 rounded text-lg transition ${
-                            favorites.includes(teaching._id) 
-                              ? 'text-yellow-400' 
-                              : 'text-gray-400 hover:text-yellow-400'
-                          }`}
-                          title={favorites.includes(teaching._id) ? (t('favorites.remove') || 'Remove from favorites') : (t('favorites.add') || 'Add to favorites')}
+                  <div className="relative">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 transition-all duration-300">
+                      {(isMobile && !showAllRegular ? paginatedRegular.slice(0, 3) : paginatedRegular).map((teaching) => (
+                        <div 
+                          key={teaching._id} 
+                          className="bg-white/90 rounded-xl shadow p-3 sm:p-6 cursor-pointer hover:shadow-lg transition-all duration-300 group relative"
+                          onClick={() => handleOpenModal(teaching)}
                         >
-                          {favorites.includes(teaching._id) ? '★' : '☆'}
-                        </button>
-
-                        {/* Display image and video */}
-                        {(teaching.media && teaching.media.length > 0) ? (
-                          <Swiper
-                            spaceBetween={8}
-                            slidesPerView={1}
-                            navigation
-                            pagination={{ clickable: true }}
-                            className="w-full h-32 sm:h-40 mb-2 rounded-lg bg-black"
-                            style={{ maxWidth: 320, maxHeight: 160 }}
-                          >
-                            {teaching.media.map((media, idx) => (
-                              <SwiperSlide key={idx}>
-                                {media.type === 'image' ? (
-                                  <img src={media.url ? media.url : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
-                                ) : (
-                                  <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
-                                    <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                                    <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
-                                  </div>
-                                )}
-                              </SwiperSlide>
-                            ))}
-                          </Swiper>
-                        ) : teaching.imageUrl ? (
-                          <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
-                        ) : teaching.videoUrl ? (
-                          <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
-                            <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                            <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
-                          </div>
-                        ) : null}
-                        
-                        <div className="flex items-center gap-2 mb-2 flex-wrap">
-                          {teaching.type && (
-                            <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">
-                              {t('types.' + teaching.type) || teaching.type}
-                            </span>
+                          {/* Admin Actions */}
+                          {isAdmin && (
+                            <div className="absolute top-2 right-2 z-10 flex gap-1">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handlePinToggle(teaching._id, false); }}
+                                className="bg-gray-400 text-white p-1 rounded text-xs hover:bg-gray-500 transition"
+                                title={t('admin.pin') || 'Pin'}
+                              >
+                                📌
+                              </button>
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleDeleteTeaching(teaching._id); }}
+                                className="bg-red-500 text-white p-1 rounded text-xs hover:bg-red-600 transition"
+                                title={t('admin.delete') || 'Delete'}
+                              >
+                                🗑️
+                              </button>
+                            </div>
                           )}
-                          {Array.isArray(teaching.tags) && teaching.tags.length > 0 && teaching.tags.map((tag: string) => (
-                            <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">
-                              {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
-                            </span>
-                          ))}
-                        </div>
-                        
-                        <h2 className="text-base sm:text-xl font-bold mb-2 text-blue-900 group-hover:text-yellow-600 transition-colors duration-200">
-                          {language === 'ar' && teaching.title_ar ? teaching.title_ar : teaching.title}
-                        </h2>
-                        <div className="text-xs text-gray-400 mb-2">
-                          {new Date(teaching.date).toLocaleDateString(language)}
-                        </div>
-                        <p className="text-gray-700 line-clamp-3">
-                          {language === 'ar' && teaching.content_ar ? teaching.content_ar : teaching.content}
-                        </p>
-                        
-                        {teaching.author && (
-                          <div className="flex items-center gap-2 mt-2">
-                            {teaching.authorAvatar && (
-                              <img src={teaching.authorAvatar} alt={teaching.author} className="w-7 h-7 rounded-full object-cover" />
-                            )}
-                            <span className="text-xs text-gray-500">
-                              {t('by')} {language === 'ar' && teaching.author_ar ? teaching.author_ar : teaching.author}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
 
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="flex justify-center mt-8 gap-2">
-                      <button
-                        onClick={() => setPage(Math.max(1, page - 1))}
-                        disabled={page === 1}
-                        className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50 hover:bg-white/30 transition"
-                      >
-                        {t('pagination.previous') || 'Previous'}
-                      </button>
-                      <span className="px-4 py-2 text-white">
-                        {page} / {totalPages}
-                      </span>
-                      <button
-                        onClick={() => setPage(Math.min(totalPages, page + 1))}
-                        disabled={page === totalPages}
-                        className="px-4 py-2 bg-white/20 text-white rounded-lg disabled:opacity-50 hover:bg-white/30 transition"
-                      >
-                        {t('pagination.next') || 'Next'}
-                      </button>
+                          {/* Favorite Button */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleFavorite(teaching._id); }}
+                            className={`absolute top-2 left-2 z-10 p-1 rounded text-lg transition ${
+                              favorites.includes(teaching._id) 
+                                ? 'text-yellow-400' 
+                                : 'text-gray-400 hover:text-yellow-400'
+                            }`}
+                            title={favorites.includes(teaching._id) ? (t('favorites.remove') || 'Remove from favorites') : (t('favorites.add') || 'Add to favorites')}
+                          >
+                            {favorites.includes(teaching._id) ? '★' : '☆'}
+                          </button>
+
+                          {/* Display image and video */}
+                          {(teaching.media && teaching.media.length > 0) ? (
+                            <Swiper
+                              spaceBetween={8}
+                              slidesPerView={1}
+                              navigation
+                              pagination={{ clickable: true }}
+                              className="w-full h-32 sm:h-40 mb-2 rounded-lg bg-black"
+                              style={{ maxWidth: 320, maxHeight: 160 }}
+                            >
+                              {teaching.media.map((media, idx) => (
+                                <SwiperSlide key={idx}>
+                                  {media.type === 'image' ? (
+                                    <img src={media.url ? media.url : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                                  ) : (
+                                    <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                                      <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
+                                      <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
+                                    </div>
+                                  )}
+                                </SwiperSlide>
+                              ))}
+                            </Swiper>
+                          ) : teaching.imageUrl ? (
+                            <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                          ) : teaching.videoUrl ? (
+                            <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                              <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
+                              <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
+                            </div>
+                          ) : null}
+                          
+                          <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            {teaching.type && (
+                              <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">
+                                {t('types.' + teaching.type) || teaching.type}
+                              </span>
+                            )}
+                            {Array.isArray(teaching.tags) && teaching.tags.length > 0 && teaching.tags.map((tag: string) => (
+                              <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded text-xs font-semibold">
+                                {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
+                              </span>
+                            ))}
+                          </div>
+                          
+                          <h2 className="text-base sm:text-xl font-bold mb-2 text-blue-900 group-hover:text-yellow-600 transition-colors duration-200">
+                            {language === 'ar' && teaching.title_ar ? teaching.title_ar : teaching.title}
+                          </h2>
+                          <div className="text-xs text-gray-400 mb-2">
+                            {new Date(teaching.date).toLocaleDateString(language)}
+                          </div>
+                          <p className="text-gray-700 line-clamp-3">
+                            {language === 'ar' && teaching.content_ar ? teaching.content_ar : teaching.content}
+                          </p>
+                          
+                          {teaching.author && (
+                            <div className="flex items-center gap-2 mt-2">
+                              {teaching.authorAvatar && (
+                                <img src={teaching.authorAvatar} alt={teaching.author} className="w-7 h-7 rounded-full object-cover" />
+                              )}
+                              <span className="text-xs text-gray-500">
+                                {t('by')} {language === 'ar' && teaching.author_ar ? teaching.author_ar : teaching.author}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
+                    {isMobile && !showAllRegular && paginatedRegular.length > 3 && (
+                      <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white/90 to-transparent pointer-events-none rounded-b-xl" />
+                    )}
+                  </div>
+                  {isMobile && paginatedRegular.length > 3 && (
+                    <button
+                      className="block mx-auto mt-4 px-6 py-2 rounded-full bg-yellow-400 text-white font-bold shadow-lg hover:bg-yellow-500 transition text-base"
+                      onClick={() => setShowAllRegular(true)}
+                    >
+                      {t('forum.viewAllTeachings') || 'View All Teachings'}
+                    </button>
                   )}
                 </div>
               )}
