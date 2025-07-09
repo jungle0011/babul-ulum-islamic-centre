@@ -229,6 +229,7 @@ const resources = {
       
       // Forum additional
       'forum.allTeachings': 'All Teachings',
+      'latest_teachings': 'Latest Teachings',
 
       // Tags (additional)
       'tags.Guide': 'Guide',
@@ -471,6 +472,7 @@ const resources = {
       
       // Forum additional
       'forum.allTeachings': 'جميع التعاليم',
+      'latest_teachings': 'أحدث التعاليم',
 
       // Tags (additional)
       'tags.Guide': 'دليل',

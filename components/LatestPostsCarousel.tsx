@@ -6,6 +6,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { useRouter } from 'next/navigation';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 interface Teaching {
   _id: string;
@@ -38,6 +39,7 @@ async function expandTikTokLinkIfNeeded(url: string): Promise<string> {
 }
 
 export default function LatestPostsCarousel() {
+  const { t, i18n } = useTranslation();
   const [posts, setPosts] = useState<Teaching[]>([]);
   const [modalPost, setModalPost] = useState<Teaching | null>(null);
   const [modalActiveIndex, setModalActiveIndex] = useState(0);
@@ -55,12 +57,13 @@ export default function LatestPostsCarousel() {
 
   return (
     <section className="max-w-6xl mx-auto py-8 px-2">
-      <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-6 text-center tracking-tight">Latest Teachings</h2>
+      <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-6 text-center tracking-tight">{t('latest_teachings')}</h2>
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
-        spaceBetween={24}
-        slidesPerView={1}
+        spaceBetween={16}
+        slidesPerView={2.2}
         breakpoints={{
+          320: { slidesPerView: 2.2 },
           640: { slidesPerView: 2 },
           1024: { slidesPerView: 3 },
           1440: { slidesPerView: 4 },
@@ -69,6 +72,7 @@ export default function LatestPostsCarousel() {
         loop={true}
         pagination={{ clickable: true, el: '.main-carousel-pagination' }}
         className="pb-2"
+        dir="ltr"
       >
         {posts.map(post => (
           <SwiperSlide key={post._id}>
@@ -123,8 +127,8 @@ export default function LatestPostsCarousel() {
       <div className="main-carousel-pagination flex justify-center items-center mt-4 mb-8" />
       {/* Modal overlay for post preview */}
       {modalPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setModalPost(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-screen overflow-y-auto p-4 sm:p-6 flex flex-col items-center" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" style={{ direction: 'ltr' }} onClick={() => setModalPost(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-screen overflow-y-auto p-4 sm:p-6 flex flex-col items-center mx-auto" onClick={e => e.stopPropagation()}>
             {/* Close button above media for visibility */}
             <button onClick={() => setModalPost(null)} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl z-20 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200" aria-label="Close">×</button>
             {/* Media carousel */}

@@ -409,7 +409,7 @@ function TeachingsPageContent() {
                     {filteredFeatured.map((teaching) => (
                       <div 
                         key={teaching._id} 
-                        className="bg-white/90 rounded-xl shadow-lg p-6 cursor-pointer hover:shadow-xl transition-all duration-300 group relative border-2 border-yellow-400"
+                        className="bg-white/90 rounded-xl shadow-lg p-3 sm:p-6 cursor-pointer hover:shadow-xl transition-all duration-300 group relative border-2 border-yellow-400 max-w-xs w-full mx-auto"
                         onClick={() => handleOpenModal(teaching)}
                       >
                         {/* Admin Actions */}
@@ -452,28 +452,28 @@ function TeachingsPageContent() {
                             slidesPerView={1}
                             navigation
                             pagination={{ clickable: true }}
-                            className="w-full h-40 mb-2 rounded-lg bg-black"
+                            className="w-full h-32 sm:h-40 mb-2 rounded-lg bg-black"
                             style={{ maxWidth: 320, maxHeight: 160 }}
                           >
                             {teaching.media.map((media, idx) => (
                               <SwiperSlide key={idx}>
                                 {media.type === 'image' ? (
-                                  <img src={media.url ? media.url : ''} alt="media" className="w-full h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                                  <img src={media.url ? media.url : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
                                 ) : (
-                                  <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                                  <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
                                     <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                                    <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
+                                    <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
                                   </div>
                                 )}
                               </SwiperSlide>
                             ))}
                           </Swiper>
                         ) : teaching.imageUrl ? (
-                          <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                          <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
                         ) : teaching.videoUrl ? (
-                          <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                          <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
                             <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                            <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
+                            <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
                           </div>
                         ) : null}
                         
@@ -493,7 +493,7 @@ function TeachingsPageContent() {
                           </span>
                         </div>
                         
-                        <h2 className="text-xl font-bold mb-2 text-blue-900 group-hover:text-yellow-600 transition-colors duration-200">
+                        <h2 className="text-base sm:text-xl font-bold mb-2 text-blue-900 group-hover:text-yellow-600 transition-colors duration-200">
                           {language === 'ar' && teaching.title_ar ? teaching.title_ar : teaching.title}
                         </h2>
                         <div className="text-xs text-gray-400 mb-2">
@@ -525,11 +525,11 @@ function TeachingsPageContent() {
                   <h2 className="text-2xl font-bold mb-6 text-white text-center">
                     {t('forum.allTeachings') || 'All Teachings'}
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {paginatedRegular.map((teaching) => (
                       <div 
                         key={teaching._id} 
-                        className="bg-white/90 rounded-xl shadow p-6 cursor-pointer hover:shadow-lg transition-all duration-300 group relative"
+                        className="bg-white/90 rounded-xl shadow p-3 sm:p-6 cursor-pointer hover:shadow-lg transition-all duration-300 group relative"
                         onClick={() => handleOpenModal(teaching)}
                       >
                         {/* Admin Actions */}
@@ -572,28 +572,28 @@ function TeachingsPageContent() {
                             slidesPerView={1}
                             navigation
                             pagination={{ clickable: true }}
-                            className="w-full h-40 mb-2 rounded-lg bg-black"
+                            className="w-full h-32 sm:h-40 mb-2 rounded-lg bg-black"
                             style={{ maxWidth: 320, maxHeight: 160 }}
                           >
                             {teaching.media.map((media, idx) => (
                               <SwiperSlide key={idx}>
                                 {media.type === 'image' ? (
-                                  <img src={media.url ? media.url : ''} alt="media" className="w-full h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                                  <img src={media.url ? media.url : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg cursor-pointer" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
                                 ) : (
-                                  <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                                  <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
                                     <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                                    <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
+                                    <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
                                   </div>
                                 )}
                               </SwiperSlide>
                             ))}
                           </Swiper>
                         ) : teaching.imageUrl ? (
-                          <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
+                          <img src={teaching.imageUrl ? teaching.imageUrl : ''} alt="media" className="w-full h-32 sm:h-40 object-contain rounded-lg mb-2 bg-black cursor-pointer" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }} />
                         ) : teaching.videoUrl ? (
-                          <div className="w-full h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
+                          <div className="w-full h-32 sm:h-40 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" style={{ maxWidth: 320, maxHeight: 160 }} onClick={e => { e.stopPropagation(); handleOpenModal(teaching); }}>
                             <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                            <img src="/video-thumb.png" alt="video" className="w-full h-40 object-contain rounded-lg opacity-60" />
+                            <img src="/video-thumb.png" alt="video" className="w-full h-32 sm:h-40 object-contain rounded-lg opacity-60" />
                           </div>
                         ) : null}
                         
@@ -610,7 +610,7 @@ function TeachingsPageContent() {
                           ))}
                         </div>
                         
-                        <h2 className="text-xl font-bold mb-2 text-blue-900 group-hover:text-yellow-600 transition-colors duration-200">
+                        <h2 className="text-base sm:text-xl font-bold mb-2 text-blue-900 group-hover:text-yellow-600 transition-colors duration-200">
                           {language === 'ar' && teaching.title_ar ? teaching.title_ar : teaching.title}
                         </h2>
                         <div className="text-xs text-gray-400 mb-2">
