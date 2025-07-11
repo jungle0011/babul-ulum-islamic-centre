@@ -11,6 +11,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 SwiperCore.use([Navigation, Pagination]);
+import LanguageToggle from '@/components/LanguageToggle';
 
 interface Comment {
   _id?: string;
@@ -342,57 +343,55 @@ function TeachingsPageContent() {
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/70 to-slate-900/90" />
       </div>
       {/* Sticky Filter Bar */}
-      <div className="sticky top-0 z-40 bg-black/80 backdrop-blur-sm border-b border-yellow-500/30 shadow-lg">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex flex-wrap gap-3 items-center justify-center">
-            <input
-              type="text"
-              placeholder={t('forum.search.placeholder') || 'Search teachings...'}
-              value={search}
-              onChange={e => { setSearch(e.target.value); setPage(1); }}
-              className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm min-w-[200px] bg-white/90 backdrop-blur-sm"
-            />
+      <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-yellow-500/30 shadow-lg">
+        <div className="max-w-6xl mx-auto px-4 py-4 flex flex-wrap gap-3 items-center justify-center relative">
+          {/* Language Toggle on the right */}
+          <div className="absolute right-0 top-1">
+            <LanguageToggle />
+          </div>
+          <input
+            type="text"
+            placeholder={t('forum.search.placeholder') || 'Search teachings...'}
+            value={search}
+            onChange={e => { setSearch(e.target.value); setPage(1); }}
+            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm min-w-[200px] bg-white/90 backdrop-blur-sm"
+          />
+          <button
+            onClick={() => setShowFavorites(!showFavorites)}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+              showFavorites 
+                ? 'bg-yellow-400 text-white' 
+                : 'bg-white/20 text-white hover:bg-white/30 border border-white/30'
+            }`}
+          >
+            {showFavorites ? (t('favorites.hide') || 'Hide Favorites') : (t('favorites.show') || 'Show Favorites')}
+          </button>
+          {tags.map((tag: string) => (
             <button
-              onClick={() => setShowFavorites(!showFavorites)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
-                showFavorites 
+              key={tag}
+              onClick={() => { setSelectedTag(selectedTag === tag ? null : tag); setPage(1); }}
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition ${
+                selectedTag === tag 
                   ? 'bg-yellow-400 text-white' 
                   : 'bg-white/20 text-white hover:bg-white/30 border border-white/30'
               }`}
             >
-              {showFavorites ? (t('favorites.hide') || 'Hide Favorites') : (t('favorites.show') || 'Show Favorites')}
+              {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
             </button>
-            {tags.map((tag: string) => (
-              <button
-                key={tag}
-                onClick={() => { setSelectedTag(selectedTag === tag ? null : tag); setPage(1); }}
-                className={`px-3 py-1 rounded-full text-xs font-semibold transition ${
-                  selectedTag === tag 
-                    ? 'bg-yellow-400 text-white' 
-                    : 'bg-white/20 text-white hover:bg-white/30 border border-white/30'
-                }`}
-              >
-                {t('tags.' + tag) !== 'tags.' + tag ? t('tags.' + tag) : tag}
-              </button>
-            ))}
-            {selectedTag && (
-              <button 
-                onClick={() => setSelectedTag(null)} 
-                className="text-xs text-yellow-300 underline hover:text-yellow-100"
-              >
-                {t('forum.filter.clear') || 'Clear Filter'}
-              </button>
-            )}
-          </div>
+          ))}
+          {selectedTag && (
+            <button 
+              onClick={() => setSelectedTag(null)} 
+              className="text-xs text-yellow-300 underline hover:text-yellow-100"
+            >
+              {t('forum.filter.clear') || 'Clear Filter'}
+            </button>
+          )}
         </div>
       </div>
 
       <div className="py-8 px-4 relative z-10">
         <div className="max-w-6xl mx-auto relative">
-          {/* Language Toggle */}
-          <div className="absolute right-0 top-0 z-20">
-            <LanguageToggleButton />
-          </div>
           
           <h1 className="text-4xl font-bold mb-8 text-center text-white tracking-tight">
             {t('forum.title')}
@@ -937,46 +936,6 @@ function TeachingsPageContent() {
         </div>
       )}
     </div>
-  );
-}
-
-function LanguageToggleButton() {
-  const { language, setLanguage } = useLanguage();
-  const { t } = useTranslation();
-  const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'ar' : 'en');
-  };
-  return (
-    <motion.button
-      onClick={toggleLanguage}
-      aria-label={t('nav.toggleLanguage') || 'Toggle language'}
-      className="bg-white/95 backdrop-blur-sm rounded-full p-3 shadow-lg border border-yellow-500/30 hover:shadow-xl transition-all duration-300 group min-h-[44px] min-w-[44px]"
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="flex items-center space-x-2 rtl:space-x-reverse">
-        <div className="w-8 h-6 rounded-md overflow-hidden border border-gray-300 shadow-sm">
-          {language === 'en' ? (
-            <div className="w-full h-full bg-gradient-to-b from-green-600 via-white to-green-600 flex items-center justify-center relative">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-              </div>
-              <div className="text-xs font-bold text-green-600">🇸🇦</div>
-            </div>
-          ) : (
-            <div className="w-full h-full bg-gradient-to-br from-blue-600 via-red-600 to-blue-600 flex items-center justify-center">
-              <div className="text-xs font-bold text-white">🇬🇧</div>
-            </div>
-          )}
-        </div>
-        <span className="text-sm font-medium text-gray-700 group-hover:text-blue-600 transition-colors hidden sm:block">
-          {language === 'en' ? 'العربية' : 'English'}
-        </span>
-      </div>
-    </motion.button>
   );
 } 
 

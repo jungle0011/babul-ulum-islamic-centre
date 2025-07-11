@@ -51,13 +51,13 @@ export default function LatestPostsCarousel() {
       .then(res => res.json())
       .then(data => {
         const sorted = data.sort((a: Teaching, b: Teaching) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        setPosts(sorted.slice(0, 5));
+        setPosts(sorted); // Remove .slice(0, 5)
       });
   }, []);
 
   return (
     <section className="max-w-6xl mx-auto py-8 px-2">
-      <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-6 text-center tracking-tight">{t('latest_teachings')}</h2>
+      <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-6 text-center tracking-tight">{t('latest_dailyUpdates')}</h2>
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
         spaceBetween={16}
@@ -127,8 +127,8 @@ export default function LatestPostsCarousel() {
       <div className="main-carousel-pagination flex justify-center items-center mt-4 mb-8" />
       {/* Modal overlay for post preview */}
       {modalPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" style={{ direction: 'ltr' }} onClick={() => setModalPost(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-screen overflow-y-auto p-4 sm:p-6 flex flex-col items-center mx-auto" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-2 sm:px-0" style={{ direction: 'ltr' }} onClick={() => setModalPost(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-xs sm:max-w-lg relative max-h-screen overflow-y-auto p-2 sm:p-6 flex flex-col items-center mx-auto" onClick={e => e.stopPropagation()}>
             {/* Close button above media for visibility */}
             <button onClick={() => setModalPost(null)} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl z-20 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200" aria-label="Close">×</button>
             {/* Media carousel */}
@@ -141,6 +141,7 @@ export default function LatestPostsCarousel() {
                     slidesPerView={1}
                     navigation={modalPost.media.length > 1}
                     pagination={false}
+                    autoplay={{ delay: 3000, disableOnInteraction: false }}
                     className="w-full h-48 rounded-lg bg-black custom-swiper-nav"
                     style={{ maxWidth: 480, maxHeight: 192 }}
                     onSlideChange={swiper => {
@@ -223,7 +224,7 @@ export default function LatestPostsCarousel() {
             <p className="text-gray-800 mb-4 whitespace-pre-line">{modalPost.content}</p>
             {/* Comments section */}
             <CommentsSection postId={modalPost._id} />
-            <button onClick={() => { setModalPost(null); router.push('/teachings'); }} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 rounded-lg shadow transition mt-2">Go to All Teachings</button>
+            <button onClick={() => { setModalPost(null); router.push('/teachings'); }} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 rounded-lg shadow transition mt-2">{t('forum.allDailyUpdates') || 'Go to All Daily Updates'}</button>
           </div>
         </div>
       )}

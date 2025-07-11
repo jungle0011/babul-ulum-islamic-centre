@@ -49,7 +49,7 @@ const Navigation: React.FC = () => {
     { href: '#home', label: t('nav.home') },
     { href: '#about', label: t('nav.about') },
     { href: '#services', label: t('nav.services') },
-    { href: '/teachings', label: t('nav.teachings') },
+    { href: '/teachings', label: t('nav.dailyUpdates') },
     { href: 'https://selar.com/m/BabulUlumImamCentre', label: t('nav.bookshop'), external: true, ariaLabel: t('nav.bookshop') },
     { href: '#contact', label: t('nav.contact') },
   ];

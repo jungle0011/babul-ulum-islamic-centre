@@ -189,7 +189,7 @@ const ContactSection: React.FC = () => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <Send className="w-5 h-5" />
-                  <span>Send via WhatsApp</span>
+                  <span>{t('contact.form.sendViaWhatsapp')}</span>
                 </motion.button>
               </form>
             </div>
