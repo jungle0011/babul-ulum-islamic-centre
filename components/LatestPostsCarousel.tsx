@@ -98,11 +98,11 @@ export default function LatestPostsCarousel() {
   }, [posts]);
 
   return (
-    <section className="max-w-6xl mx-auto py-8 px-2">
+    <section className="max-w-6xl mx-auto py-8 px-4">
       <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-6 text-center tracking-tight">{t('latest_dailyUpdates')}</h2>
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
-        spaceBetween={16}
+        spaceBetween={24}
         slidesPerView={2.2}
         breakpoints={{
           320: { slidesPerView: 2.2 },
@@ -130,7 +130,7 @@ export default function LatestPostsCarousel() {
         {posts.map(post => (
           <SwiperSlide key={post._id}>
             <div
-              className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 rounded-2xl shadow-xl p-4 h-[320px] w-full flex flex-col justify-between cursor-pointer hover:scale-[1.03] transition-transform border-2 border-yellow-400/40"
+              className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 rounded-2xl shadow-xl p-4 h-[320px] w-full flex flex-col justify-between cursor-pointer hover:scale-[1.03] transition-transform border-2 border-yellow-400/40 mx-2"
               style={{ minWidth: 260, maxWidth: 320 }}
               onClick={() => setModalPost(post)}
             >
