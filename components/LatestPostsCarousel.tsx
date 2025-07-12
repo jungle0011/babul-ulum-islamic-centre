@@ -180,8 +180,8 @@ export default function LatestPostsCarousel() {
       <div className="main-carousel-pagination flex justify-center items-center mt-4 mb-8" />
       {/* Modal overlay for post preview */}
       {modalPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-1 sm:px-6 py-6" style={{ paddingTop: '5vh', paddingBottom: '5vh' }} onClick={() => setModalPost(null)}>
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-xs sm:max-w-md md:max-w-lg relative max-h-[80vh] mt-2 mb-2 overflow-y-auto p-2 sm:p-8 flex flex-col items-center gap-4" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.18)', marginLeft: 'auto', marginRight: 'auto' }} onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-0 py-0" style={{ minHeight: '100vh' }} onClick={() => setModalPost(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-full sm:max-w-md md:max-w-lg relative max-h-[90vh] overflow-y-auto p-2 sm:p-8 flex flex-col items-center gap-4 mx-2 my-4" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }} onClick={e => e.stopPropagation()}>
             {/* Close button above media for visibility */}
             <button onClick={() => setModalPost(null)} className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl z-20 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200" aria-label="Close">×</button>
             {/* Media carousel */}

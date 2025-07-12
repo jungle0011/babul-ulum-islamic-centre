@@ -115,7 +115,7 @@ const Navigation: React.FC = () => {
           </motion.button>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse pr-16 rtl:pl-16">
+          <div className="hidden md:flex items-center space-x-8 rtl:space-x-reverse pr-32 rtl:pl-32">
             {navItems.map((item, index) => (
               item.external ? (
                 <motion.a
