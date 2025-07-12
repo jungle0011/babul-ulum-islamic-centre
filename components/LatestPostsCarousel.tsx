@@ -44,6 +44,7 @@ export default function LatestPostsCarousel() {
   const [modalPost, setModalPost] = useState<Teaching | null>(null);
   const [modalActiveIndex, setModalActiveIndex] = useState(0);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const swiperRef = useRef<any>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -54,6 +55,19 @@ export default function LatestPostsCarousel() {
         setPosts(sorted); // Remove .slice(0, 5)
       });
   }, []);
+
+  // Ensure autoplay starts after posts are loaded
+  useEffect(() => {
+    if (posts.length > 0 && swiperRef.current) {
+      console.log('Posts loaded, starting autoplay');
+      setTimeout(() => {
+        if (swiperRef.current && swiperRef.current.autoplay) {
+          swiperRef.current.autoplay.start();
+          console.log('Autoplay started after posts loaded');
+        }
+      }, 1000);
+    }
+  }, [posts]);
 
   return (
     <section className="max-w-6xl mx-auto py-8 px-2">
@@ -79,11 +93,20 @@ export default function LatestPostsCarousel() {
         pagination={{ clickable: true, el: '.main-carousel-pagination' }}
         className="pb-2 main-carousel"
         dir="ltr"
+        onSwiper={(swiper) => {
+          swiperRef.current = swiper;
+          console.log('Swiper instance set:', swiper);
+        }}
         onInit={(swiper) => {
           // Ensure autoplay starts
+          console.log('Swiper initialized, autoplay:', swiper.autoplay);
           if (swiper.autoplay) {
             swiper.autoplay.start();
+            console.log('Autoplay started');
           }
+        }}
+        onSlideChange={(swiper) => {
+          console.log('Slide changed to:', swiper.activeIndex);
         }}
       >
         {posts.map(post => (
@@ -96,7 +119,7 @@ export default function LatestPostsCarousel() {
               <div className="flex items-center justify-center w-full h-40 mb-3 bg-blue-950 rounded-lg border border-yellow-200">
                 {Array.isArray(post.media) && post.media.length > 0 ? (
                   <Swiper
-                    modules={[Autoplay, Pagination, Navigation]}
+                    modules={[Pagination, Navigation]}
                     spaceBetween={8}
                     slidesPerView={1}
                     pagination={{ clickable: true }}
