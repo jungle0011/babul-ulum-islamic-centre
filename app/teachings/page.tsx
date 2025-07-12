@@ -344,17 +344,18 @@ function TeachingsPageContent() {
       </div>
       {/* Sticky Filter Bar */}
       <div className="sticky top-0 z-50 bg-black/80 backdrop-blur-sm border-b border-yellow-500/30 shadow-lg">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex flex-wrap gap-3 items-center justify-center relative">
-          {/* Language Toggle on the right */}
-          <div className="absolute right-0 top-1">
-            <LanguageToggle />
+        <div className="max-w-6xl mx-auto px-2 py-3 flex flex-wrap gap-2 items-center justify-center relative">
+          {/* Language Toggle on the right, avoid overlap on mobile */}
+          <div className="absolute right-2 top-2 sm:static sm:right-0 sm:top-0 z-20">
+            <LanguageToggle className="!static !relative !top-0 !right-0 min-w-[40px] min-h-[40px] px-2 py-2" />
           </div>
           <input
             type="text"
             placeholder={t('forum.search.placeholder') || 'Search teachings...'}
             value={search}
             onChange={e => { setSearch(e.target.value); setPage(1); }}
-            className="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm min-w-[200px] bg-white/90 backdrop-blur-sm"
+            className="px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-yellow-400 shadow-sm min-w-[140px] bg-white/90 backdrop-blur-sm mt-2 sm:mt-0"
+            style={{ maxWidth: '60vw' }}
           />
           <button
             onClick={() => setShowFavorites(!showFavorites)}
@@ -676,18 +677,12 @@ function TeachingsPageContent() {
         </div>
       </div>
 
-      {/* Read More Modal */}
+      {/* Modal for opened post - ensure not hidden behind navbar and fully visible on mobile */}
       {modalTeaching && (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/70" onClick={() => setModalTeaching(null)}>
-          <div className="relative bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6 pt-10 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
-            <button
-              onClick={() => setModalTeaching(null)}
-              className="absolute top-6 right-6 text-gray-400 hover:text-yellow-500 text-2xl font-bold z-10 bg-white rounded-full w-8 h-8 flex items-center justify-center shadow-sm"
-              aria-label="Close"
-            >
-              ×
-            </button>
-
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-1 sm:p-4" style={{ paddingTop: '60px' }} onClick={() => setModalTeaching(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[85vh] mt-8 overflow-y-auto p-2 sm:p-8 flex flex-col items-center gap-4" onClick={e => e.stopPropagation()}>
+            {/* Close button above media for visibility */}
+            <button onClick={() => setModalTeaching(null)} className="absolute top-2 right-2 text-gray-400 hover:text-red-500 text-2xl z-20 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200" aria-label="Close">×</button>
             {/* Media preview */}
             <div className="mb-4 flex flex-col justify-center items-center gap-4 mt-2">
               {(modalTeaching.media && modalTeaching.media.length > 0) ? (

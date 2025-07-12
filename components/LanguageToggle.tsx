@@ -20,7 +20,8 @@ const LanguageToggle: React.FC<{ className?: string; hideOnMobileMenu?: boolean 
 
   return (
     <div
-      className={`sm:fixed sm:top-4 sm:right-4 static relative z-[70] bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-yellow-500/30 hover:shadow-xl transition-all duration-300 group min-h-[36px] min-w-[36px] ${hideOnMobileMenu ? 'hidden sm:block' : ''} ${className}`}
+      className={`sm:fixed sm:top-4 sm:right-4 static relative z-[70] bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-yellow-500/30 hover:shadow-xl transition-all duration-300 group min-h-[36px] min-w-[36px] ${hideOnMobileMenu ? 'hidden sm:block' : ''} ${className} mx-1 my-1 sm:mx-0 sm:my-0`}
+      style={{ zIndex: 80 }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >

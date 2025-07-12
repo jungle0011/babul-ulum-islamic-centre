@@ -71,6 +71,7 @@ const resources = {
       "contact.form.email": "Email",
       "contact.form.message": "Message",
       "contact.form.send": "Send Message",
+      "contact.form.sendViaWhatsapp": "Send via WhatsApp",
 
       // Footer
       "footer.rights":

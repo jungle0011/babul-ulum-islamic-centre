@@ -16,7 +16,6 @@ export default function Home() {
   return (
     <LanguageProvider>
       <div className="min-h-screen">
-        <LanguageToggle />
         <Navigation />
         <main>
           <HeroSection />
