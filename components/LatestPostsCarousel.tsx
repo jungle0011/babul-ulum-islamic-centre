@@ -98,17 +98,17 @@ export default function LatestPostsCarousel() {
   }, [posts]);
 
   return (
-    <section className="max-w-6xl mx-auto py-8 px-4">
+    <section className="max-w-6xl mx-auto py-8 px-6">
       <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-6 text-center tracking-tight">{t('latest_dailyUpdates')}</h2>
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
         spaceBetween={24}
         slidesPerView={2.2}
         breakpoints={{
-          320: { slidesPerView: 2.2, slidesOffsetBefore: 16, slidesOffsetAfter: 16 },
-          640: { slidesPerView: 2, slidesOffsetBefore: 24, slidesOffsetAfter: 24 },
-          1024: { slidesPerView: 3, slidesOffsetBefore: 32, slidesOffsetAfter: 32 },
-          1440: { slidesPerView: 4, slidesOffsetBefore: 48, slidesOffsetAfter: 48 },
+          320: { slidesPerView: 2.2 },
+          640: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
+          1440: { slidesPerView: 4 },
         }}
         allowTouchMove={true}
         simulateTouch={true}
@@ -342,6 +342,24 @@ export default function LatestPostsCarousel() {
           </div>
         </div>
       )}
+      <style jsx global>{`
+        .main-carousel .swiper-wrapper {
+          padding-left: 16px !important;
+          padding-right: 16px !important;
+        }
+        @media (min-width: 640px) {
+          .main-carousel .swiper-wrapper {
+            padding-left: 24px !important;
+            padding-right: 24px !important;
+          }
+        }
+        @media (min-width: 1024px) {
+          .main-carousel .swiper-wrapper {
+            padding-left: 32px !important;
+            padding-right: 32px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
