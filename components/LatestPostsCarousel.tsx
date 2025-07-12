@@ -181,11 +181,11 @@ export default function LatestPostsCarousel() {
       {/* Modal overlay for post preview */}
       {modalPost && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-0 py-0" style={{ minHeight: '100vh' }} onClick={() => setModalPost(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm sm:max-w-md md:max-w-lg relative max-h-[90vh] overflow-y-auto overflow-x-hidden p-2 sm:p-8 flex flex-col items-center gap-4 mx-auto my-4" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }} onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-full sm:max-w-md md:max-w-lg relative max-h-[90vh] overflow-y-auto overflow-x-hidden p-2 sm:p-8 flex flex-col items-center gap-4 mx-auto my-4" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }} onClick={e => e.stopPropagation()}>
             {/* Close button above media for visibility */}
             <button onClick={() => setModalPost(null)} className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl z-20 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200" aria-label="Close">×</button>
             {/* Media carousel */}
-            <div className="w-full mt-8 mb-6 flex-shrink-0 overflow-x-hidden" style={{ maxWidth: '100%' }}>
+            <div className="w-full max-w-full mt-8 mb-6 flex-shrink-0 overflow-x-hidden" style={{ maxWidth: '100%' }}>
               {Array.isArray(modalPost.media) && modalPost.media.length > 0 ? (
                 <div className="relative w-full h-48">
                   <Swiper
@@ -219,13 +219,13 @@ export default function LatestPostsCarousel() {
                     {modalPost.media.map((media, idx) => (
                       <SwiperSlide key={idx}>
                         {media.type === 'image' ? (
-                          <img src={media.url ? media.url : ''} alt="media" className="w-full h-48 sm:h-56 object-contain rounded-lg" />
+                          <img src={media.url ? media.url : ''} alt="media" className="w-full max-w-full h-48 sm:h-56 object-contain rounded-lg overflow-x-hidden" />
                         ) : (
                           <video
                             ref={el => { videoRefs.current[idx] = el; }}
                             src={media.url ? media.url : ''}
                             controls
-                            className="w-full h-48 sm:h-56 object-contain rounded-lg"
+                            className="w-full max-w-full h-48 sm:h-56 object-contain rounded-lg overflow-x-hidden"
                           />
                         )}
                       </SwiperSlide>
