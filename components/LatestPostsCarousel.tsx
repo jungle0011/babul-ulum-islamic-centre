@@ -100,7 +100,7 @@ export default function LatestPostsCarousel() {
   return (
     <section className="max-w-6xl mx-auto py-8 px-0">
       <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-6 text-center tracking-tight">{t('latest_dailyUpdates')}</h2>
-      <div className="-mx-8 md:-mx-10"> {/* Force edge spacing on desktop and mobile */}
+      <div className="-mx-4"> {/* Universal moderate negative margin for edge space */}
         <Swiper
           modules={[Autoplay, Pagination, Navigation]}
           spaceBetween={24}
@@ -131,7 +131,7 @@ export default function LatestPostsCarousel() {
           {posts.map(post => (
             <SwiperSlide key={post._id}>
               <div
-                className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 rounded-2xl shadow-xl p-4 h-[260px] w-full flex flex-col justify-between cursor-pointer hover:scale-[1.03] transition-transform border-2 border-yellow-400/40 mx-8 md:mx-10" // Force card margin on desktop
+                className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 rounded-2xl shadow-xl p-4 h-[260px] w-full flex flex-col justify-between cursor-pointer hover:scale-[1.03] transition-transform border-2 border-yellow-400/40 mx-4" // Universal card margin
                 style={{ minWidth: 220, maxWidth: 260 }}
                 onClick={() => setModalPost(post)}
               >
