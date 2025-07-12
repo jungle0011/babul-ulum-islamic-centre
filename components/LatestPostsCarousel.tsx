@@ -229,16 +229,18 @@ export default function LatestPostsCarousel() {
                               className="w-full max-w-full h-48 sm:h-56 object-contain rounded-lg overflow-x-hidden"
                             />
                           )}
-                          {/* View in Full Mode icon/button */}
-                          <button
-                            className="absolute bottom-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 z-20 flex items-center justify-center"
-                            title="View in Full Mode"
-                            onClick={() => window.open(media.url, '_blank')}
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 3v2.25A2.25 2.25 0 0018 7.5h2.25M8.25 21v-2.25A2.25 2.25 0 006 16.5H3.75M21 8.25V6a2.25 2.25 0 00-2.25-2.25H15.75M3 15.75V18a2.25 2.25 0 002.25 2.25H8.25" />
-                            </svg>
-                          </button>
+                          {/* View in Full Mode icon/button for images only */}
+                          {media.type === 'image' && (
+                            <button
+                              className="absolute bottom-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 z-20 flex items-center justify-center"
+                              title="View in Full Mode"
+                              onClick={() => window.open(media.url, '_blank')}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 3v2.25A2.25 2.25 0 0018 7.5h2.25M8.25 21v-2.25A2.25 2.25 0 006 16.5H3.75M21 8.25V6a2.25 2.25 0 00-2.25-2.25H15.75M3 15.75V18a2.25 2.25 0 002.25 2.25H8.25" />
+                              </svg>
+                            </button>
+                          )}
                         </div>
                       </SwiperSlide>
                     ))}
