@@ -172,8 +172,10 @@ export default function LatestPostsCarousel() {
                   ))}
                 </div>
                 <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">{post.title}</h3>
-                <p className="text-white/80 text-sm line-clamp-2 mb-2">{post.content}</p>
-                <span className="text-xs text-yellow-200">{new Date(post.date).toLocaleDateString()}</span>
+                {/* Show only a very short snippet, hide date/time */}
+                {post.content && (
+                  <p className="text-white/80 text-sm line-clamp-1 mb-2">{post.content}</p>
+                )}
               </div>
             </SwiperSlide>
           ))}
