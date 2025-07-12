@@ -104,6 +104,8 @@ export default function LatestPostsCarousel() {
         modules={[Autoplay, Pagination, Navigation]}
         spaceBetween={24}
         slidesPerView={2.2}
+        slidesOffsetBefore={16} // add offset before first slide
+        slidesOffsetAfter={16}  // add offset after last slide
         breakpoints={{
           320: { slidesPerView: 2.2 },
           640: { slidesPerView: 2 },
