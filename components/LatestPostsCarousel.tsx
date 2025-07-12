@@ -181,7 +181,7 @@ export default function LatestPostsCarousel() {
       {/* Modal overlay for post preview */}
       {modalPost && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-2 sm:p-4" onClick={() => setModalPost(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto p-4 sm:p-10 flex flex-col items-center gap-6 space-y-0" onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[80vh] mt-16 overflow-y-auto p-4 sm:p-8 flex flex-col items-center gap-6" onClick={e => e.stopPropagation()}>
             {/* Close button above media for visibility */}
             <button onClick={() => setModalPost(null)} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl z-20 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200" aria-label="Close">×</button>
             {/* Media carousel */}
@@ -313,10 +313,10 @@ export default function LatestPostsCarousel() {
             </div>
             <h2 className="text-xl font-bold mb-4 text-center">{modalPost.title}</h2>
             <div className="text-xs text-gray-400 mb-4 text-center">{new Date(modalPost.date).toLocaleDateString()}</div>
-            <div className="flex flex-wrap gap-3 mb-6 justify-center">
-              {modalPost.type && <span className="bg-yellow-400 text-white px-2 py-1 rounded-full text-xs font-bold">{modalPost.type}</span>}
+            <div className="flex flex-wrap gap-2 mb-4 justify-center">
+              {modalPost.type && <span className="bg-yellow-400 text-white px-1.5 py-0.5 rounded-full text-xs font-bold">{modalPost.type}</span>}
               {Array.isArray(modalPost.tags) && modalPost.tags.map(tag => (
-                <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">{tag}</span>
+                <span key={tag} className="bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded-full text-xs font-semibold">{tag}</span>
               ))}
             </div>
             <p className="text-gray-800 mb-8 whitespace-pre-line text-center leading-relaxed">{modalPost.content}</p>

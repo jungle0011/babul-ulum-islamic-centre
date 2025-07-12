@@ -169,6 +169,7 @@ const Navigation: React.FC = () => {
                 </Link>
               )
             ))}
+            <LanguageToggle className="ml-4" />
           </div>
 
           {/* Mobile: Hamburger + LanguageToggle inline */}
