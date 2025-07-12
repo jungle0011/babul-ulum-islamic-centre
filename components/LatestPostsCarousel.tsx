@@ -342,24 +342,6 @@ export default function LatestPostsCarousel() {
           </div>
         </div>
       )}
-      <style jsx global>{`
-        .main-carousel .swiper-wrapper {
-          padding-left: 16px !important;
-          padding-right: 16px !important;
-        }
-        @media (min-width: 640px) {
-          .main-carousel .swiper-wrapper {
-            padding-left: 24px !important;
-            padding-right: 24px !important;
-          }
-        }
-        @media (min-width: 1024px) {
-          .main-carousel .swiper-wrapper {
-            padding-left: 32px !important;
-            padding-right: 32px !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }
