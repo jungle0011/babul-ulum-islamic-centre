@@ -13,13 +13,14 @@ const languages = [
   { code: 'eg', label: 'العربية المصرية' },
 ];
 
-const LanguageToggle: React.FC<{ className?: string }> = ({ className = '' }) => {
+const LanguageToggle: React.FC<{ className?: string; hideOnMobileMenu?: boolean }> = ({ className = '', hideOnMobileMenu = false }) => {
   const { language, setLanguage } = useLanguage();
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   return (
-    <div className={`fixed top-4 z-[70] right-4 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-yellow-500/30 hover:shadow-xl transition-all duration-300 group min-h-[44px] min-w-[44px] ${className}`}
+    <div
+      className={`fixed top-4 right-4 sm:right-4 sm:left-auto left-4 sm:top-4 z-[70] bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-yellow-500/30 hover:shadow-xl transition-all duration-300 group min-h-[44px] min-w-[44px] ${hideOnMobileMenu ? 'hidden sm:block' : ''} ${className}`}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >

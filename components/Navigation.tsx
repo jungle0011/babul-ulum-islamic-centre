@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import LanguageToggle from './LanguageToggle';
 
 const Navigation: React.FC = () => {
   const { t } = useTranslation();
@@ -90,6 +91,7 @@ const Navigation: React.FC = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
     >
+      <LanguageToggle hideOnMobileMenu={isOpen} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}

@@ -61,13 +61,25 @@ export default function LatestPostsCarousel() {
     if (posts.length > 0 && swiperRef.current) {
       console.log('Posts loaded, starting autoplay');
       setTimeout(() => {
-        if (swiperRef.current && swiperRef.current.autoplay) {
+        if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.start === 'function') {
           swiperRef.current.autoplay.start();
           console.log('Autoplay started after posts loaded');
         }
       }, 1000);
     }
   }, [posts]);
+
+  // Force autoplay to start after component mounts
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (swiperRef.current && swiperRef.current.autoplay && typeof swiperRef.current.autoplay.start === 'function') {
+        swiperRef.current.autoplay.start();
+        console.log('Autoplay forced to start after mount');
+      }
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <section className="max-w-6xl mx-auto py-8 px-2">
@@ -85,28 +97,39 @@ export default function LatestPostsCarousel() {
         autoplay={{ 
           delay: 3000, 
           disableOnInteraction: false,
-          pauseOnMouseEnter: true,
           waitForTransition: true,
-          stopOnLastSlide: false
+          stopOnLastSlide: false,
+          pauseOnMouseEnter: false
         }}
+        allowTouchMove={true}
+        simulateTouch={true}
         loop={true}
         pagination={{ clickable: true, el: '.main-carousel-pagination' }}
         className="pb-2 main-carousel"
         dir="ltr"
         onSwiper={(swiper) => {
           swiperRef.current = swiper;
-          console.log('Swiper instance set:', swiper);
+          console.log('Swiper instance created:', swiper);
+          // Force autoplay to start after a delay
+          setTimeout(() => {
+            if (swiper && swiper.autoplay && typeof swiper.autoplay.start === 'function') {
+              swiper.autoplay.start();
+              console.log('Autoplay started from onSwiper');
+            }
+          }, 1000);
         }}
         onInit={(swiper) => {
-          // Ensure autoplay starts
-          console.log('Swiper initialized, autoplay:', swiper.autoplay);
-          if (swiper.autoplay) {
-            swiper.autoplay.start();
-            console.log('Autoplay started');
-          }
+          console.log('Swiper initialized:', swiper);
+          // Force autoplay to start after initialization
+          setTimeout(() => {
+            if (swiper && swiper.autoplay && typeof swiper.autoplay.start === 'function') {
+              swiper.autoplay.start();
+              console.log('Autoplay started from onInit');
+            }
+          }, 1000);
         }}
         onSlideChange={(swiper) => {
-          console.log('Slide changed to:', swiper.activeIndex);
+          // Optionally log slide changes
         }}
       >
         {posts.map(post => (
@@ -162,8 +185,8 @@ export default function LatestPostsCarousel() {
       <div className="main-carousel-pagination flex justify-center items-center mt-4 mb-8" />
       {/* Modal overlay for post preview */}
       {modalPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setModalPost(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto p-6 flex flex-col items-center" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-2 sm:p-4" onClick={() => setModalPost(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto p-4 sm:p-8 flex flex-col items-center gap-4" onClick={e => e.stopPropagation()}>
             {/* Close button above media for visibility */}
             <button onClick={() => setModalPost(null)} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl z-20 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200" aria-label="Close">×</button>
             {/* Media carousel */}
@@ -179,7 +202,6 @@ export default function LatestPostsCarousel() {
                     autoplay={{ 
                       delay: 3000, 
                       disableOnInteraction: false,
-                      pauseOnMouseEnter: true,
                       waitForTransition: true,
                       stopOnLastSlide: false
                     }}
@@ -263,6 +285,13 @@ export default function LatestPostsCarousel() {
                     }
                     .main-carousel .swiper-slide {
                       transition: transform 0.3s ease-out;
+                    }
+                    /* Force autoplay visibility */
+                    .main-carousel {
+                      overflow: visible !important;
+                    }
+                    .main-carousel .swiper-container {
+                      overflow: visible !important;
                     }
                     /* Mobile modal improvements */
                     @media (max-width: 640px) {
