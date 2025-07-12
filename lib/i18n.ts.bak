@@ -265,7 +265,7 @@ const resources = {
 
       // Forum additional
       "forum.allTeachings": "All Teachings",
-      "latest_dailyUpdates": "Latest Daily Updates",
+      latest_teachings: "Latest Teachings",
 
       // Tags (additional)
       "tags.Guide": "Guide",
@@ -274,12 +274,28 @@ const resources = {
       "tags.life": "Life",
       "tags.year": "Year",
       // Types (additional)
-     "types.Guide": "Guide",
-"types.wise": "Wise",
-"types.Prayer": "Prayer",
-"types.life": "Life",
-"types.year": "Year",
-"forum.allDailyUpdates": "All Daily Updates",
+      "types.Guide": "Guide",
+      "types.wise": "Wise",
+      "types.Prayer": "Prayer",
+      "types.life": "Life",
+      "types.year": "Year",
+      "forum.allDailyUpdates": "All Daily Updates",
+      latest_dailyUpdates: "Latest Daily Updates",
+        "No daily updates found. Try a different search or filter.",
+      "forum.loading": "Loading daily updates...",
+      "favorites.empty": "No favorite daily updates yet.",
+      "admin.deleteConfirm":
+        "Are you sure you want to delete this daily update?",
+      "admin.pinned": "Daily update pinned!",
+      "admin.unpinned": "Daily update unpinned!",
+      "admin.deleted": "Daily update deleted!",
+      "services.preacher": "Islamic lectures - public lectures",
+      "footer.service8": "Islamic lectures - public lectures",
+      "lang.en": "English",
+      "lang.ar": "العربية",
+      "lang.ha": "Hausa",
+      "lang.fr": "Français",
+      "lang.eg": "العربية المصرية",
     },
   },
   ar: {
@@ -532,7 +548,7 @@ const resources = {
 
       // Forum additional
       "forum.allTeachings": "جميع التعاليم",
-      "latest_dailyUpdates": "أحدث التحديثات اليومية",
+      latest_teachings: "أحدث التعاليم",
 
       // Tags (additional)
       "tags.Guide": "دليل",
@@ -547,7 +563,17 @@ const resources = {
       "types.life": "الحياة",
       "types.year": "سنة",
       "forum.allDailyUpdates": "جميع التحديثات اليومية",
+      latest_dailyUpdates: "أحدث التحديثات اليومية",
+      "services.preacher": "محاضرات إسلامية - محاضرات عامة",
+      "footer.service8": "محاضرات إسلامية - محاضرات عامة",
+      "lang.en": "English",
+      "lang.ar": "العربية",
+      "lang.ha": "هوسا",
+      "lang.fr": "فرنسي",
+      "lang.eg": "العربية المصرية",
       "contact.form.sendViaWhatsapp": "ابعت على واتساب",
+      "forum.allDailyUpdates": "كل التحديثات اليومية",
+      latest_dailyUpdates: "أحدث التحديثات اليومية",
     },
   },
   ha: {
@@ -680,7 +706,7 @@ const resources = {
       "footer.service8": "Wa'azin Musulunci - Wa'azin Jama'a",
       "contact.form.sendViaWhatsapp": "Aika ta WhatsApp",
       "forum.allDailyUpdates": "Dukkan Sabbin Labarai",
-      "latest_dailyUpdates": "Sabbin Labarai na Kwana-Kwana",
+      latest_dailyUpdates: "Sabbin Labarai na Kwana-Kwana",
     },
   },
   fr: {
@@ -949,7 +975,7 @@ const resources = {
 
       // Forum additional
       "forum.allTeachings": "Toutes les leçons",
-      "latest_dailyUpdates": "Dernières mises à jour quotidiennes",
+      latest_teachings: "Dernières leçons",
 
       // Tags (additional)
       "tags.Guide": "Guide",
@@ -964,6 +990,21 @@ const resources = {
       "types.life": "Vie",
       "types.year": "Année",
       "forum.allDailyUpdates": "Toutes les mises à jour quotidiennes",
+      latest_dailyUpdates: "Dernières mises à jour quotidiennes",
+      "forum.noResults": "Aucune mise à jour quotidienne trouvée. Essayez une recherche ou un filtre différent.",
+      "forum.loading": "Chargement des mises à jour quotidiennes...",
+      "favorites.empty": "Aucune mise à jour quotidienne favorite trouvée.",
+      "admin.deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette mise à jour quotidienne ?",
+      "admin.pinned": "Mise à jour quotidienne épinglée !",
+      "admin.unpinned": "Mise à jour quotidienne désépinglée !",
+      "admin.deleted": "Mise à jour quotidienne supprimée !",
+      "services.preacher": "Prédicateur / Conférencier islamique",
+      "footer.service8": "Prédicateur / Conférencier islamique",
+      "lang.en": "Anglais",
+      "lang.ar": "Arabe",
+      "lang.ha": "Hausa",
+      "lang.fr": "Français",
+      "lang.eg": "Arabe égyptien",
       "contact.form.sendViaWhatsapp": "Envoyer via WhatsApp",
     },
   },
@@ -1107,7 +1148,7 @@ const resources = {
 "forum.viewAllFeatured":"شوفكلالمميز",
 "forum.viewAllTeachings":"شوفكلالدروس",
 "forum.allDailyUpdates":"كلالتحديثاتاليومية",
-"latest_dailyUpdates":"أحدثالتحديثاتاليومية",
+latest_dailyUpdates:"أحدثالتحديثاتاليومية",
 //Favorites
 "favorites.show":"عرضالمفضلة",
 "favorites.hide":"عرضالكل",
@@ -1116,6 +1157,7 @@ const resources = {
 "favorites.empty":"مفيشدروسمفضلةلسه.",
 //Comments
 "comments.title":"تعليقات",
+"comments.add":"أضفتعليق",
 "comments.name":"اسم",
 "comments.email":"إيميل(اختياري)",
 "comments.content":"تعليق",
@@ -1157,6 +1199,12 @@ const resources = {
 "types.Prayer":"صلاة",
 "types.life":"حياة",
 "types.year":"سنة",
+//LanguageToggle
+"lang.en":"إنجليزي",
+"lang.ar":"عربي",
+"lang.ha":"هوسا",
+"lang.fr":"فرنسي",
+"lang.eg":"مصري",
 }
   },
 };

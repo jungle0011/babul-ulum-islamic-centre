@@ -68,11 +68,23 @@ export default function LatestPostsCarousel() {
           1024: { slidesPerView: 3 },
           1440: { slidesPerView: 4 },
         }}
-        autoplay={{ delay: 3000, disableOnInteraction: false }}
+        autoplay={{ 
+          delay: 3000, 
+          disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+          waitForTransition: true,
+          stopOnLastSlide: false
+        }}
         loop={true}
         pagination={{ clickable: true, el: '.main-carousel-pagination' }}
-        className="pb-2"
+        className="pb-2 main-carousel"
         dir="ltr"
+        onInit={(swiper) => {
+          // Ensure autoplay starts
+          if (swiper.autoplay) {
+            swiper.autoplay.start();
+          }
+        }}
       >
         {posts.map(post => (
           <SwiperSlide key={post._id}>
@@ -127,12 +139,12 @@ export default function LatestPostsCarousel() {
       <div className="main-carousel-pagination flex justify-center items-center mt-4 mb-8" />
       {/* Modal overlay for post preview */}
       {modalPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm" onClick={() => setModalPost(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-screen overflow-y-auto p-4 sm:p-6 flex flex-col items-center" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={() => setModalPost(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative max-h-[90vh] overflow-y-auto p-6 flex flex-col items-center" onClick={e => e.stopPropagation()}>
             {/* Close button above media for visibility */}
             <button onClick={() => setModalPost(null)} className="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-2xl z-20 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200" aria-label="Close">×</button>
             {/* Media carousel */}
-            <div className="w-full mt-8 mb-3 flex-shrink-0">
+            <div className="w-full mt-8 mb-4 flex-shrink-0">
               {Array.isArray(modalPost.media) && modalPost.media.length > 0 ? (
                 <div className="relative w-full h-48">
                   <Swiper
@@ -141,7 +153,13 @@ export default function LatestPostsCarousel() {
                     slidesPerView={1}
                     navigation={modalPost.media.length > 1}
                     pagination={false}
-                    autoplay={{ delay: 3000, disableOnInteraction: false }}
+                    autoplay={{ 
+                      delay: 3000, 
+                      disableOnInteraction: false,
+                      pauseOnMouseEnter: true,
+                      waitForTransition: true,
+                      stopOnLastSlide: false
+                    }}
                     className="w-full h-48 rounded-lg bg-black custom-swiper-nav"
                     style={{ maxWidth: 480, maxHeight: 192 }}
                     onSlideChange={swiper => {
@@ -191,6 +209,7 @@ export default function LatestPostsCarousel() {
                       border: 2px solid #facc15;
                       top: 50%;
                       transform: translateY(-50%);
+                      z-index: 20;
                     }
                     .custom-swiper-nav .swiper-button-next:after,
                     .custom-swiper-nav .swiper-button-prev:after {
@@ -203,6 +222,38 @@ export default function LatestPostsCarousel() {
                     .custom-swiper-nav .swiper-button-prev {
                       left: 8px;
                     }
+                    /* Ensure autoplay works properly */
+                    .swiper-wrapper {
+                      transition-timing-function: ease-out;
+                    }
+                    /* Force autoplay to work */
+                    .swiper-slide {
+                      transition: transform 0.3s ease-out;
+                    }
+                    /* Ensure autoplay continues after user interaction */
+                    .swiper-container {
+                      overflow: hidden;
+                    }
+                    /* Main carousel autoplay fixes */
+                    .main-carousel .swiper-wrapper {
+                      transition-timing-function: ease-out;
+                    }
+                    .main-carousel .swiper-slide {
+                      transition: transform 0.3s ease-out;
+                    }
+                    /* Mobile modal improvements */
+                    @media (max-width: 640px) {
+                      .custom-swiper-nav .swiper-button-next,
+                      .custom-swiper-nav .swiper-button-prev {
+                        width: 36px;
+                        height: 36px;
+                        font-size: 1.5rem;
+                      }
+                      .custom-swiper-nav .swiper-button-next:after,
+                      .custom-swiper-nav .swiper-button-prev:after {
+                        font-size: 1.5rem;
+                      }
+                    }
                   `}</style>
                 </div>
               ) : modalPost.imageUrl ? (
@@ -213,18 +264,20 @@ export default function LatestPostsCarousel() {
                 </div>
               ) : null}
             </div>
-            <h2 className="text-xl font-bold mb-2">{modalPost.title}</h2>
-            <div className="text-xs text-gray-400 mb-2">{new Date(modalPost.date).toLocaleDateString()}</div>
-            <div className="flex flex-wrap gap-2 mb-2">
+            <h2 className="text-xl font-bold mb-3 text-center">{modalPost.title}</h2>
+            <div className="text-xs text-gray-400 mb-3 text-center">{new Date(modalPost.date).toLocaleDateString()}</div>
+            <div className="flex flex-wrap gap-2 mb-4 justify-center">
               {modalPost.type && <span className="bg-yellow-400 text-white px-2 py-1 rounded-full text-xs font-bold">{modalPost.type}</span>}
               {Array.isArray(modalPost.tags) && modalPost.tags.map(tag => (
                 <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">{tag}</span>
               ))}
             </div>
-            <p className="text-gray-800 mb-4 whitespace-pre-line">{modalPost.content}</p>
+            <p className="text-gray-800 mb-6 whitespace-pre-line text-center leading-relaxed">{modalPost.content}</p>
             {/* Comments section */}
-            <CommentsSection postId={modalPost._id} />
-            <button onClick={() => { setModalPost(null); router.push('/teachings'); }} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 rounded-lg shadow transition mt-2">Go to All Teachings</button>
+            <div className="w-full mb-4">
+              <CommentsSection postId={modalPost._id} />
+            </div>
+            <button onClick={() => { setModalPost(null); router.push('/teachings'); }} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 rounded-lg shadow transition mt-4">Go to All Teachings</button>
           </div>
         </div>
       )}

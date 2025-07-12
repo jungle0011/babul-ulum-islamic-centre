@@ -176,7 +176,7 @@ const Navigation: React.FC = () => {
           <motion.button
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? t('nav.closeMenu') || 'Close menu' : t('nav.openMenu') || 'Open menu'}
-            className={`md:hidden p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center ${
+            className={`md:hidden p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center z-[60] ${
               scrolled ? 'hover:bg-gray-100' : 'hover:bg-white/20'
             }`}
             whileTap={{ scale: 0.95 }}
@@ -190,7 +190,7 @@ const Navigation: React.FC = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="md:hidden bg-white/95 backdrop-blur-md border-t border-yellow-500/20"
+            className="md:hidden bg-white/95 backdrop-blur-md border-t border-yellow-500/20 z-[55]"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}

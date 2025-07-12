@@ -19,7 +19,7 @@ const LanguageToggle: React.FC<{ className?: string }> = ({ className = '' }) =>
   const [open, setOpen] = useState(false);
 
   return (
-    <div className={`fixed top-4 z-[60] right-4 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-yellow-500/30 hover:shadow-xl transition-all duration-300 group min-h-[44px] min-w-[44px] ${className}`}
+    <div className={`fixed top-4 z-[70] right-4 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-yellow-500/30 hover:shadow-xl transition-all duration-300 group min-h-[44px] min-w-[44px] ${className}`}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
     >
@@ -35,7 +35,7 @@ const LanguageToggle: React.FC<{ className?: string }> = ({ className = '' }) =>
         <svg className="ml-2 w-4 h-4 text-gray-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-[80]">
           {languages.map(l => (
             <button
               key={l.code}
