@@ -98,86 +98,88 @@ export default function LatestPostsCarousel() {
   }, [posts]);
 
   return (
-    <section className="max-w-6xl mx-auto py-8 px-6">
+    <section className="max-w-6xl mx-auto py-8 px-0">
       <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-6 text-center tracking-tight">{t('latest_dailyUpdates')}</h2>
-      <Swiper
-        modules={[Autoplay, Pagination, Navigation]}
-        spaceBetween={24}
-        slidesPerView={2.2}
-        breakpoints={{
-          320: { slidesPerView: 2.2 },
-          640: { slidesPerView: 2 },
-          1024: { slidesPerView: 3 },
-          1440: { slidesPerView: 4 },
-        }}
-        allowTouchMove={true}
-        simulateTouch={true}
-        loop={true}
-        pagination={{ clickable: true, el: '.main-carousel-pagination' }}
-        className="pb-2 main-carousel"
-        dir="ltr"
-        onSwiper={(swiper) => {
-          swiperRef.current = swiper;
-          console.log('Swiper instance created:', swiper);
-        }}
-        onInit={(swiper) => {
-          console.log('Swiper initialized:', swiper);
-        }}
-        onSlideChange={(swiper) => {
-          // Optionally log slide changes
-        }}
-      >
-        {posts.map(post => (
-          <SwiperSlide key={post._id}>
-            <div
-              className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 rounded-2xl shadow-xl p-4 h-[320px] w-full flex flex-col justify-between cursor-pointer hover:scale-[1.03] transition-transform border-2 border-yellow-400/40 mx-2"
-              style={{ minWidth: 260, maxWidth: 320 }}
-              onClick={() => setModalPost(post)}
-            >
-              <div className="flex items-center justify-center w-full h-40 mb-3 bg-blue-950 rounded-lg border border-yellow-200">
-                {Array.isArray(post.media) && post.media.length > 0 ? (
-                  <Swiper
-                    modules={[Pagination, Navigation]}
-                    spaceBetween={8}
-                    slidesPerView={1}
-                    pagination={{ clickable: true }}
-                    className="w-full h-40 rounded-lg bg-black"
-                    style={{ maxWidth: 320, maxHeight: 160 }}
-                  >
-                    {post.media.map((media, idx) => (
-                      <SwiperSlide key={idx}>
-                        {media.type === 'image' ? (
-                          <img src={media.url ? media.url : ''} alt={post.title} className="object-cover w-full h-full rounded-lg" />
-                        ) : (
-                          <video src={media.url ? media.url : ''} controls className="object-cover w-full h-full rounded-lg" />
-                        )}
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                ) : post.imageUrl ? (
-                  <img src={post.imageUrl} alt={post.title} className="object-cover w-full h-full rounded-lg" />
-                ) : post.videoUrl ? (
-                  <div className="w-full h-full flex items-center justify-center bg-black rounded-lg">
-                    <span className="text-white text-3xl">🎬</span>
-                  </div>
-                ) : (
-                  <span className="text-yellow-300 text-2xl">No Media</span>
-                )}
+      <div className="-mx-4">
+        <Swiper
+          modules={[Autoplay, Pagination, Navigation]}
+          spaceBetween={24}
+          slidesPerView={2.2}
+          breakpoints={{
+            320: { slidesPerView: 2.2 },
+            640: { slidesPerView: 2 },
+            1024: { slidesPerView: 3 },
+            1440: { slidesPerView: 4 },
+          }}
+          allowTouchMove={true}
+          simulateTouch={true}
+          loop={true}
+          pagination={{ clickable: true, el: '.main-carousel-pagination' }}
+          className="pb-2 main-carousel"
+          dir="ltr"
+          onSwiper={(swiper) => {
+            swiperRef.current = swiper;
+            console.log('Swiper instance created:', swiper);
+          }}
+          onInit={(swiper) => {
+            console.log('Swiper initialized:', swiper);
+          }}
+          onSlideChange={(swiper) => {
+            // Optionally log slide changes
+          }}
+        >
+          {posts.map(post => (
+            <SwiperSlide key={post._id}>
+              <div
+                className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 rounded-2xl shadow-xl p-4 h-[320px] w-full flex flex-col justify-between cursor-pointer hover:scale-[1.03] transition-transform border-2 border-yellow-400/40 mx-4"
+                style={{ minWidth: 260, maxWidth: 320 }}
+                onClick={() => setModalPost(post)}
+              >
+                <div className="flex items-center justify-center w-full h-40 mb-3 bg-blue-950 rounded-lg border border-yellow-200">
+                  {Array.isArray(post.media) && post.media.length > 0 ? (
+                    <Swiper
+                      modules={[Pagination, Navigation]}
+                      spaceBetween={8}
+                      slidesPerView={1}
+                      pagination={{ clickable: true }}
+                      className="w-full h-40 rounded-lg bg-black"
+                      style={{ maxWidth: 320, maxHeight: 160 }}
+                    >
+                      {post.media.map((media, idx) => (
+                        <SwiperSlide key={idx}>
+                          {media.type === 'image' ? (
+                            <img src={media.url ? media.url : ''} alt={post.title} className="object-cover w-full h-full rounded-lg" />
+                          ) : (
+                            <video src={media.url ? media.url : ''} controls className="object-cover w-full h-full rounded-lg" />
+                          )}
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  ) : post.imageUrl ? (
+                    <img src={post.imageUrl} alt={post.title} className="object-cover w-full h-full rounded-lg" />
+                  ) : post.videoUrl ? (
+                    <div className="w-full h-full flex items-center justify-center bg-black rounded-lg">
+                      <span className="text-white text-3xl">🎬</span>
+                    </div>
+                  ) : (
+                    <span className="text-yellow-300 text-2xl">No Media</span>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {post.type && <span className="bg-yellow-400 text-white px-2 py-1 rounded-full text-xs font-bold">{post.type}</span>}
+                  {Array.isArray(post.tags) && post.tags.map(tag => (
+                    <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">{tag}</span>
+                  ))}
+                </div>
+                <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">{post.title}</h3>
+                <p className="text-white/80 text-sm line-clamp-2 mb-2">{post.content}</p>
+                <span className="text-xs text-yellow-200">{new Date(post.date).toLocaleDateString()}</span>
               </div>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {post.type && <span className="bg-yellow-400 text-white px-2 py-1 rounded-full text-xs font-bold">{post.type}</span>}
-                {Array.isArray(post.tags) && post.tags.map(tag => (
-                  <span key={tag} className="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-semibold">{tag}</span>
-                ))}
-              </div>
-              <h3 className="text-lg font-bold text-white mb-1 line-clamp-1">{post.title}</h3>
-              <p className="text-white/80 text-sm line-clamp-2 mb-2">{post.content}</p>
-              <span className="text-xs text-yellow-200">{new Date(post.date).toLocaleDateString()}</span>
-            </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-      <div className="main-carousel-pagination flex justify-center items-center mt-4 mb-8" />
+            </SwiperSlide>
+          ))}
+        </Swiper>
+        <div className="main-carousel-pagination flex justify-center items-center mt-4 mb-8" />
+      </div>
       {/* Modal overlay for post preview */}
       {modalPost && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-0 py-0" style={{ minHeight: '100vh' }} onClick={() => setModalPost(null)}>
