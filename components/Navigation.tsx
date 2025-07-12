@@ -91,7 +91,6 @@ const Navigation: React.FC = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <LanguageToggle hideOnMobileMenu={isOpen} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -110,9 +109,7 @@ const Navigation: React.FC = () => {
               />
             </div>
             <div className="hidden sm:block">
-              <h1 className={`text-lg font-bold ${scrolled ? 'text-blue-800' : 'text-white'}`}>
-                Babul Ulum
-              </h1>
+              <h1 className={`text-lg font-bold ${scrolled ? 'text-blue-800' : 'text-white'}`}>Babul Ulum</h1>
               <p className={`text-xs ${scrolled ? 'text-gray-600' : 'text-white/80'}`}>Islamic Learning Centre</p>
             </div>
           </motion.button>
@@ -174,17 +171,18 @@ const Navigation: React.FC = () => {
             ))}
           </div>
 
-          {/* Mobile Menu Button */}
-          <motion.button
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label={isOpen ? t('nav.closeMenu') || 'Close menu' : t('nav.openMenu') || 'Open menu'}
-            className={`md:hidden p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center z-[60] ${
-              scrolled ? 'hover:bg-gray-100' : 'hover:bg-white/20'
-            }`}
-            whileTap={{ scale: 0.95 }}
-          >
-            {isOpen ? <X size={24} className={scrolled ? 'text-gray-700' : 'text-white'} /> : <Menu size={24} className={scrolled ? 'text-gray-700' : 'text-white'} />}
-          </motion.button>
+          {/* Mobile: Hamburger + LanguageToggle inline */}
+          <div className="flex md:hidden items-center gap-2">
+            <motion.button
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label={isOpen ? t('nav.closeMenu') || 'Close menu' : t('nav.openMenu') || 'Open menu'}
+              className={`p-2 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center z-[60] ${scrolled ? 'hover:bg-gray-100' : 'hover:bg-white/20'}`}
+              whileTap={{ scale: 0.95 }}
+            >
+              {isOpen ? <X size={24} className={scrolled ? 'text-gray-700' : 'text-white'} /> : <Menu size={24} className={scrolled ? 'text-gray-700' : 'text-white'} />}
+            </motion.button>
+            <LanguageToggle className="static relative !top-0 !right-0 min-w-[44px] min-h-[44px] px-2 py-2" hideOnMobileMenu={isOpen} />
+          </div>
         </div>
       </div>
 
