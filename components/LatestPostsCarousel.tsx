@@ -108,8 +108,8 @@ export default function LatestPostsCarousel() {
           breakpoints={{
             320: { slidesPerView: 2.2 },
             640: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-            1440: { slidesPerView: 4 },
+            1024: { slidesPerView: 2.5 }, // Use 2.5 on desktop for better spacing
+            1440: { slidesPerView: 3 },
           }}
           allowTouchMove={true}
           simulateTouch={true}
@@ -131,8 +131,7 @@ export default function LatestPostsCarousel() {
           {posts.map(post => (
             <SwiperSlide key={post._id}>
               <div
-                className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 rounded-2xl shadow-xl p-4 h-[260px] w-full flex flex-col justify-between cursor-pointer hover:scale-[1.03] transition-transform border-2 border-yellow-400/40 mx-4" // Universal card margin
-                style={{ minWidth: 220, maxWidth: 260 }}
+                className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 rounded-2xl shadow-xl p-4 h-[260px] w-auto max-w-xs flex flex-col justify-between cursor-pointer hover:scale-[1.03] transition-transform border-2 border-yellow-400/40 mx-4" // Responsive card sizing
                 onClick={() => setModalPost(post)}
               >
                 <div className="flex items-center justify-center w-full h-40 mb-3 bg-blue-950 rounded-lg border border-yellow-200">
