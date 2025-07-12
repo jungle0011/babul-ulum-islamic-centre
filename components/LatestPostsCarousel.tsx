@@ -181,7 +181,7 @@ export default function LatestPostsCarousel() {
       {/* Modal overlay for post preview */}
       {modalPost && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm px-0 py-0" style={{ minHeight: '100vh' }} onClick={() => setModalPost(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl max-w-[95vw] sm:max-w-md md:max-w-lg relative max-h-[90vh] overflow-y-auto overflow-x-hidden p-2 sm:p-8 flex flex-col items-center gap-4 mx-auto my-4" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }} onClick={e => e.stopPropagation()}>
+          <div className="bg-white rounded-2xl shadow-2xl w-auto max-w-[95vw] mx-auto my-4 self-center border-4 border-red-500 sm:max-w-md md:max-w-lg relative max-h-[90vh] overflow-y-auto overflow-x-hidden p-2 sm:p-8 flex flex-col items-center gap-4" style={{ boxShadow: '0 8px 32px rgba(0,0,0,0.18)' }} onClick={e => e.stopPropagation()}>
             {/* Close button above media for visibility */}
             <button onClick={() => setModalPost(null)} className="absolute top-3 right-3 text-gray-400 hover:text-red-500 text-2xl z-20 bg-white/90 rounded-full w-10 h-10 flex items-center justify-center shadow-md border border-gray-200" aria-label="Close">×</button>
             {/* Media carousel */}
