@@ -47,7 +47,6 @@ export default function LatestPostsCarousel() {
   const swiperRef = useRef<any>(null);
   const autoplayIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
-  const [iframeMedia, setIframeMedia] = useState<{ url: string, type: 'image' | 'video' } | null>(null);
 
   useEffect(() => {
     fetch('/api/articles')
@@ -219,17 +218,28 @@ export default function LatestPostsCarousel() {
                   >
                     {modalPost.media.map((media, idx) => (
                       <SwiperSlide key={idx}>
-                        {media.type === 'image' ? (
-                          <img src={media.url ? media.url : ''} alt="media" className="w-full max-w-full h-48 sm:h-56 object-contain rounded-lg overflow-x-hidden cursor-pointer" onClick={() => setIframeMedia({ url: media.url, type: 'image' })} />
-                        ) : (
-                          <video
-                            ref={el => { videoRefs.current[idx] = el; }}
-                            src={media.url ? media.url : ''}
-                            controls
-                            className="w-full max-w-full h-48 sm:h-56 object-contain rounded-lg overflow-x-hidden cursor-pointer"
-                            onClick={() => setIframeMedia({ url: media.url, type: 'video' })}
-                          />
-                        )}
+                        <div className="relative w-full h-full flex items-center justify-center">
+                          {media.type === 'image' ? (
+                            <img src={media.url ? media.url : ''} alt="media" className="w-full max-w-full h-48 sm:h-56 object-contain rounded-lg overflow-x-hidden" />
+                          ) : (
+                            <video
+                              ref={el => { videoRefs.current[idx] = el; }}
+                              src={media.url ? media.url : ''}
+                              controls
+                              className="w-full max-w-full h-48 sm:h-56 object-contain rounded-lg overflow-x-hidden"
+                            />
+                          )}
+                          {/* View in Full Mode icon/button */}
+                          <button
+                            className="absolute bottom-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 z-20 flex items-center justify-center"
+                            title="View in Full Mode"
+                            onClick={() => window.open(media.url, '_blank')}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 3v2.25A2.25 2.25 0 0018 7.5h2.25M8.25 21v-2.25A2.25 2.25 0 006 16.5H3.75M21 8.25V6a2.25 2.25 0 00-2.25-2.25H15.75M3 15.75V18a2.25 2.25 0 002.25 2.25H8.25" />
+                            </svg>
+                          </button>
+                        </div>
                       </SwiperSlide>
                     ))}
                     {/* Only show gradients if more than 1 media */}
@@ -328,17 +338,6 @@ export default function LatestPostsCarousel() {
             </div>
             <button onClick={() => { setModalPost(null); router.push('/teachings'); }} className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-3 rounded-lg shadow transition mt-4">Go to Daily Updates</button>
           </div>
-        </div>
-      )}
-      {/* Iframe modal for media preview */}
-      {iframeMedia && (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/90">
-          <button onClick={() => setIframeMedia(null)} className="absolute top-4 right-4 text-white text-3xl z-50 bg-black/70 rounded-full w-12 h-12 flex items-center justify-center shadow-md border border-gray-700" aria-label="Close">×</button>
-          {iframeMedia.type === 'image' ? (
-            <iframe src={iframeMedia.url} title="Image Preview" className="w-full h-full max-w-full max-h-full rounded-lg border-none" style={{ background: 'black' }} />
-          ) : (
-            <iframe src={iframeMedia.url} title="Video Preview" className="w-full h-full max-w-full max-h-full rounded-lg border-none" style={{ background: 'black' }} allow="autoplay; fullscreen" />
-          )}
         </div>
       )}
     </section>
