@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/session';
+import { cookies } from 'next/headers';
 
 export async function GET(request: Request) {
   try {
@@ -11,6 +12,14 @@ export async function GET(request: Request) {
       console.log('Admin check API: forcing admin status for testing');
       return NextResponse.json({ isAdmin: true });
     }
+    
+    // Debug: check all cookies
+    const allCookies = cookies().getAll();
+    console.log('All cookies in admin check:', allCookies);
+    
+    // Debug: check specific admin session cookie
+    const adminCookie = cookies().get('babul_admin_session');
+    console.log('Admin session cookie:', adminCookie);
     
     const isAdmin = isAdminAuthenticated();
     console.log('Admin check API called, isAdmin:', isAdmin);
