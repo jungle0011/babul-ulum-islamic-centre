@@ -373,6 +373,12 @@ const RenderComment: FC<RenderCommentProps> = ({ comment, onReply, isAdmin, hand
   const [replyForm, setReplyForm] = React.useState<{ content: string; name?: string }>({ content: '' });
   const [loading, setLoading] = React.useState(false);
   const [showAllReplies, setShowAllReplies] = React.useState(false);
+  
+  // Debug RenderComment props
+  React.useEffect(() => {
+    console.log('Modal RenderComment for', comment.name, '- isAdmin:', isAdmin);
+  }, [isAdmin, comment.name]);
+  
   // Helper to get a safe reply label
   const getReplyLabel = () => 'Reply';
   const getShowMoreLabel = () => 'Show more replies';
@@ -463,6 +469,11 @@ function CommentsSection({ postId }: { postId: string }) {
         setCheckedAdmin(true);
       });
   }, []);
+
+  // Debug state changes
+  React.useEffect(() => {
+    console.log('Modal state changed - isAdmin:', isAdmin, 'checkedAdmin:', checkedAdmin);
+  }, [isAdmin, checkedAdmin]);
 
   const fetchComments = () => {
     fetch(`/api/articles/${postId}/comments`).then(res => res.json()).then(data => setComments(data.comments || []));

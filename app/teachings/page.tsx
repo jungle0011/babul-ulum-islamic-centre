@@ -116,6 +116,11 @@ function TeachingsPageContent() {
     checkAdmin();
   }, []);
 
+  // Debug state changes
+  useEffect(() => {
+    console.log('State changed - isAdmin:', isAdmin, 'checkedAdmin:', checkedAdmin);
+  }, [isAdmin, checkedAdmin]);
+
   useEffect(() => {
     async function fetchTeachings() {
       try {
@@ -997,6 +1002,12 @@ const RenderComment: FC<RenderCommentProps> = ({ comment, onReply, isAdmin, curr
   const [replyForm, setReplyForm] = React.useState<{ content: string; name?: string }>({ content: '' });
   const [loading, setLoading] = React.useState(false);
   const [showAllReplies, setShowAllReplies] = React.useState(false);
+  
+  // Debug RenderComment props
+  React.useEffect(() => {
+    console.log('RenderComment for', comment.name, '- isAdmin:', isAdmin);
+  }, [isAdmin, comment.name]);
+
   const handleReply = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
