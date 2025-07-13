@@ -988,7 +988,7 @@ interface RenderCommentProps {
 }
 const RenderComment: FC<RenderCommentProps> = ({ comment, onReply, isAdmin, currentUserComments, handleDeleteComment, language, t }: RenderCommentProps) => {
   const [showReplyForm, setShowReplyForm] = React.useState(false);
-  const [replyForm, setReplyForm] = React.useState({ content: '' });
+  const [replyForm, setReplyForm] = React.useState<{ content: string; name?: string }>({ content: '' });
   const [loading, setLoading] = React.useState(false);
   const [showAllReplies, setShowAllReplies] = React.useState(false);
   const handleReply = async (e: FormEvent<HTMLFormElement>) => {
