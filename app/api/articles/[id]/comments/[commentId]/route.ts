@@ -18,9 +18,9 @@ export async function DELETE(
       );
     }
 
-    // Find the comment by userId
+    // Find the comment by _id
     const commentIndex = article.comments.findIndex(
-      (comment: any) => comment.userId === params.commentId
+      (comment: any) => comment._id && comment._id.toString() === params.commentId
     );
 
     if (commentIndex === -1) {
@@ -33,12 +33,9 @@ export async function DELETE(
     const comment = article.comments[commentIndex];
     const isAdmin = isAdminAuthenticated();
 
-    // Allow deletion if user is admin
-    // For regular users, we'll allow deletion since they can only see their own comment IDs
-    // In a production app, you'd implement proper user authentication and session management
+    // Allow deletion only if user is admin
     if (!isAdmin) {
-      // For now, allow deletion (in a real app, you'd verify the user owns this comment)
-      // This is a simplified approach where users can only delete comments they can see the ID for
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     // Remove the comment
