@@ -20,6 +20,11 @@ export default function AdminLoginPage() {
     });
     setLoading(false);
     if (res.ok) {
+      const data = await res.json();
+      // Store JWT token in localStorage for admin-only actions
+      if (data.token) {
+        localStorage.setItem('babul_admin_jwt', data.token);
+      }
       router.push('/admin/dashboard');
     } else {
       setError('Invalid credentials');

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Article from '@/lib/models/Article';
-import { isAdminAuthenticated } from '@/lib/session';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 
 export async function DELETE(
   request: NextRequest,
@@ -10,6 +12,20 @@ export async function DELETE(
   try {
     await connectDB();
     
+    // JWT admin check
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader) {
+      return NextResponse.json({ error: 'Missing Authorization header' }, { status: 401 });
+    }
+    let isAdmin = false;
+    try {
+      const token = authHeader.replace('Bearer ', '');
+      const decoded = jwt.verify(token, JWT_SECRET) as { isAdmin?: boolean };
+      isAdmin = !!decoded.isAdmin;
+    } catch (err) {
+      return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
+    }
+
     const article = await Article.findById(params.id);
     if (!article) {
       return NextResponse.json(
@@ -31,7 +47,6 @@ export async function DELETE(
     }
 
     const comment = article.comments[commentIndex];
-    const isAdmin = isAdminAuthenticated();
 
     // Allow deletion only if user is admin
     if (!isAdmin) {

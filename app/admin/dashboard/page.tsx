@@ -201,6 +201,8 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     await fetch('/api/admin/logout', { method: 'POST' });
+    // Remove JWT from localStorage
+    localStorage.removeItem('babul_admin_jwt');
     router.push('/admin');
   };
 

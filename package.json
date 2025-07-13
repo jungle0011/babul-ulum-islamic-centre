@@ -12,6 +12,7 @@
     "dotenv": "^17.0.1",
     "framer-motion": "^10.16.16",
     "i18next": "^23.7.11",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.294.0",
     "mongoose": "^8.16.2",
     "next": "14.0.4",
@@ -23,6 +24,7 @@
     "swiper": "^11.2.10"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

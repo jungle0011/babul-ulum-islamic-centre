@@ -262,8 +262,10 @@ function TeachingsPageContent() {
     if (!modalTeaching || !confirm(t('comments.deleteConfirm'))) return;
 
     try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('babul_admin_jwt') : null;
       const res = await fetch(`/api/articles/${modalTeaching._id}/comments/${commentId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: token ? { 'Authorization': `Bearer ${token}` } : undefined
       });
 
       if (res.ok) {

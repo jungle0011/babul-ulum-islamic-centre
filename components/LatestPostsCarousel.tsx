@@ -500,7 +500,11 @@ function CommentsSection({ postId }: { postId: string }) {
 
   const handleDelete = async (commentId: string) => {
     if (!window.confirm('Are you sure you want to delete this comment?')) return;
-    await fetch(`/api/articles/${postId}/comments/${commentId}`, { method: 'DELETE' });
+    const token = typeof window !== 'undefined' ? localStorage.getItem('babul_admin_jwt') : null;
+    await fetch(`/api/articles/${postId}/comments/${commentId}`, {
+      method: 'DELETE',
+      headers: token ? { 'Authorization': `Bearer ${token}` } : undefined
+    });
     fetchComments();
   };
 
