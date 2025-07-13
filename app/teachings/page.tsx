@@ -100,7 +100,18 @@ function TeachingsPageContent() {
   useEffect(() => {
     const checkAdmin = async () => {
       try {
-        const res = await fetch('/api/admin/check');
+        // Get JWT token from localStorage
+        const token = typeof window !== 'undefined' ? localStorage.getItem('babul_admin_jwt') : null;
+        console.log('JWT token for admin check:', token ? 'present' : 'missing');
+        
+        const headers: HeadersInit = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const res = await fetch('/api/admin/check', {
+          headers
+        });
         if (res.ok) {
           const data = await res.json();
           console.log('Admin check response:', data);

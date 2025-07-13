@@ -456,18 +456,29 @@ function CommentsSection({ postId }: { postId: string }) {
   const [checkedAdmin, setCheckedAdmin] = React.useState(false);
 
   React.useEffect(() => {
-    fetch('/api/admin/check')
-      .then(res => res.json())
-      .then(data => {
+    const checkAdmin = async () => {
+      try {
+        // Get JWT token from localStorage
+        const token = typeof window !== 'undefined' ? localStorage.getItem('babul_admin_jwt') : null;
+        console.log('Modal JWT token for admin check:', token ? 'present' : 'missing');
+        
+        const headers: HeadersInit = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const res = await fetch('/api/admin/check', { headers });
+        const data = await res.json();
         console.log('Modal admin check response:', data);
         setIsAdmin(data.isAdmin);
         setCheckedAdmin(true);
         console.log('Modal admin check completed, isAdmin:', data.isAdmin, 'checkedAdmin:', true);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.log('Modal admin check error:', error);
         setCheckedAdmin(true);
-      });
+      }
+    };
+    checkAdmin();
   }, []);
 
   // Debug state changes
