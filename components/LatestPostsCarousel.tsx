@@ -447,9 +447,16 @@ function CommentsSection({ postId }: { postId: string }) {
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState('');
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [checkedAdmin, setCheckedAdmin] = React.useState(false);
 
   React.useEffect(() => {
-    fetch('/api/admin/check').then(res => res.json()).then(data => setIsAdmin(data.isAdmin));
+    fetch('/api/admin/check')
+      .then(res => res.json())
+      .then(data => {
+        setIsAdmin(data.isAdmin);
+        setCheckedAdmin(true);
+      })
+      .catch(() => setCheckedAdmin(true));
   }, []);
 
   const fetchComments = () => {
@@ -495,14 +502,16 @@ function CommentsSection({ postId }: { postId: string }) {
   return (
     <div className="mt-6">
       <h4 className="text-lg font-semibold mb-2">Comments</h4>
-      {comments.length > 0 ? (
-        <div className="space-y-2 mb-4">
-          {comments.map((comment, idx) => (
-            <RenderComment key={comment.userId || idx} comment={comment} onReply={handleReplyToComment} isAdmin={isAdmin} handleDelete={handleDelete} />
-          ))}
-        </div>
-      ) : (
-        <div className="text-gray-400 mb-4">No comments yet.</div>
+      {checkedAdmin && (
+        comments.length > 0 ? (
+          <div className="space-y-2 mb-4">
+            {comments.map((comment, idx) => (
+              <RenderComment key={comment.userId || idx} comment={comment} onReply={handleReplyToComment} isAdmin={isAdmin} handleDelete={handleDelete} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-gray-400 mb-4">No comments yet.</div>
+        )
       )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
         {!isAdmin && (

@@ -76,6 +76,7 @@ function TeachingsPageContent() {
   const [loading, setLoading] = useState(true);
   const [modalTeaching, setModalTeaching] = useState<Teaching | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [checkedAdmin, setCheckedAdmin] = useState(false);
   const [copySuccess, setCopySuccess] = useState('');
   const [commentForm, setCommentForm] = useState({ name: '', email: '', content: '' });
   const [commentLoading, setCommentLoading] = useState(false);
@@ -108,6 +109,7 @@ function TeachingsPageContent() {
         console.log('Not admin');
         setIsAdmin(false);
       }
+      setCheckedAdmin(true);
     };
     checkAdmin();
   }, []);
@@ -833,25 +835,27 @@ function TeachingsPageContent() {
             <div className="border-t border-gray-200 pt-6">
               <h4 className="text-lg font-semibold mb-4 text-blue-900">{t('comments.title')}</h4>
               
-              {/* Comments List */}
-              <div className="space-y-4 mb-6">
-                {modalTeaching.comments && modalTeaching.comments.length > 0 ? (
-                  (commentsExpanded ? modalTeaching.comments : modalTeaching.comments.slice(0, 2)).map((comment, index) => (
-                    <RenderComment
-                      key={comment._id || index}
-                      comment={comment}
-                      onReply={handleReplyToComment}
-                      isAdmin={isAdmin}
-                      currentUserComments={currentUserComments}
-                      handleDeleteComment={handleDeleteComment}
-                      language={language}
-                      t={t}
-                    />
-                  ))
-                ) : (
-                  <p className="text-gray-500 text-center py-4">{t('comments.empty')}</p>
-                )}
-              </div>
+              {/* Comments List - only render after admin check */}
+              {checkedAdmin && (
+                <div className="space-y-4 mb-6">
+                  {modalTeaching.comments && modalTeaching.comments.length > 0 ? (
+                    (commentsExpanded ? modalTeaching.comments : modalTeaching.comments.slice(0, 2)).map((comment, index) => (
+                      <RenderComment
+                        key={comment._id || index}
+                        comment={comment}
+                        onReply={handleReplyToComment}
+                        isAdmin={isAdmin}
+                        currentUserComments={currentUserComments}
+                        handleDeleteComment={handleDeleteComment}
+                        language={language}
+                        t={t}
+                      />
+                    ))
+                  ) : (
+                    <p className="text-gray-500 text-center py-4">{t('comments.empty')}</p>
+                  )}
+                </div>
+              )}
               
               {/* Show more/less button */}
               {modalTeaching.comments && modalTeaching.comments.length > 2 && (
