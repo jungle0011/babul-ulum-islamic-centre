@@ -6,11 +6,10 @@ const SESSION_COOKIE = 'babul_admin_session';
 
 export function setAdminSession() {
   console.log('Setting admin session cookie');
-  cookies().set(SESSION_COOKIE, 'true', {
-    httpOnly: true,
-    path: '/',
+  cookies().set(SESSION_COOKIE, 'true', { 
+    httpOnly: true, 
+    path: '/', 
     maxAge: 60 * 60 * 24,
-    secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax'
   });
   console.log('Admin session cookie set');
