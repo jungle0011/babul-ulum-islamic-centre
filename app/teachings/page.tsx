@@ -103,13 +103,15 @@ function TeachingsPageContent() {
         const res = await fetch('/api/admin/check');
         if (res.ok) {
           const data = await res.json();
+          console.log('Admin check response:', data);
           setIsAdmin(data.isAdmin);
         }
       } catch (error) {
-        console.log('Not admin');
+        console.log('Admin check error:', error);
         setIsAdmin(false);
       }
       setCheckedAdmin(true);
+      console.log('Admin check completed, isAdmin:', isAdmin, 'checkedAdmin:', true);
     };
     checkAdmin();
   }, []);

@@ -453,10 +453,15 @@ function CommentsSection({ postId }: { postId: string }) {
     fetch('/api/admin/check')
       .then(res => res.json())
       .then(data => {
+        console.log('Modal admin check response:', data);
         setIsAdmin(data.isAdmin);
         setCheckedAdmin(true);
+        console.log('Modal admin check completed, isAdmin:', data.isAdmin, 'checkedAdmin:', true);
       })
-      .catch(() => setCheckedAdmin(true));
+      .catch((error) => {
+        console.log('Modal admin check error:', error);
+        setCheckedAdmin(true);
+      });
   }, []);
 
   const fetchComments = () => {
