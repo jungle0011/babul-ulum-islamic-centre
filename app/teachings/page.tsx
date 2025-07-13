@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, FC, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LanguageProvider, useLanguage } from '@/components/LanguageProvider';
 import { motion } from 'framer-motion';
@@ -20,6 +20,8 @@ interface Comment {
   content: string;
   date: string;
   userId: string;
+  isAdmin?: boolean;
+  replies?: Comment[];
 }
 
 interface Teaching {
@@ -217,14 +219,15 @@ function TeachingsPageContent() {
 
   const handleCommentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!modalTeaching || !commentForm.name || !commentForm.content) return;
+    if (!modalTeaching || (!isAdmin && !commentForm.name) || !commentForm.content) return;
 
     setCommentLoading(true);
     try {
+      const submitData = isAdmin ? { ...commentForm, name: 'Admin' } : commentForm;
       const res = await fetch(`/api/articles/${modalTeaching._id}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(commentForm)
+        body: JSON.stringify(submitData)
       });
 
       if (res.ok) {
@@ -328,6 +331,28 @@ function TeachingsPageContent() {
     const match = url.match(/drive\.google\.com\/file\/d\/([\w-]+)\/view/);
     return match ? `https://drive.google.com/uc?export=download&id=${match[1]}` : url;
   }
+
+  const handleReplyToComment = async (parentCommentId: string, replyForm: { content: string }) => {
+    if (!modalTeaching || !replyForm.content) return;
+    setCommentLoading(true);
+    try {
+      const replyData = isAdmin ? { ...replyForm, name: 'Admin' } : replyForm;
+      const res = await fetch(`/api/articles/${modalTeaching._id}/comments/${parentCommentId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(replyData)
+      });
+      if (res.ok) {
+        await fetchComments(modalTeaching._id); // Refresh comments
+        setCommentSuccess(t('comments.posted'));
+        setTimeout(() => setCommentSuccess(''), 3000);
+      }
+    } catch (error) {
+      setCommentSuccess(t('comments.error'));
+      setTimeout(() => setCommentSuccess(''), 3000);
+    }
+    setCommentLoading(false);
+  };
 
   return (
     <div className="min-h-screen relative">
@@ -812,29 +837,16 @@ function TeachingsPageContent() {
               <div className="space-y-4 mb-6">
                 {modalTeaching.comments && modalTeaching.comments.length > 0 ? (
                   (commentsExpanded ? modalTeaching.comments : modalTeaching.comments.slice(0, 2)).map((comment, index) => (
-                    <div key={comment.userId || index} className="bg-gray-50 rounded-lg p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="font-semibold text-gray-800">{comment.name}</span>
-                            <span className="text-xs text-gray-400">
-                              {new Date(comment.date).toLocaleDateString(language)}
-                            </span>
-                          </div>
-                          <p className="text-gray-700">{comment.content}</p>
-                        </div>
-                        {/* Show delete button for admin or comment author */}
-                        {(isAdmin || currentUserComments.has(comment.userId)) && (
-                          <button
-                            onClick={() => handleDeleteComment(comment.userId)}
-                            className="text-red-500 hover:text-red-700 text-sm ml-2"
-                            title={t('comments.delete')}
-                          >
-                            {t('comments.delete')}
-                          </button>
-                        )}
-                      </div>
-                    </div>
+                    <RenderComment
+                      key={comment._id || index}
+                      comment={comment}
+                      onReply={handleReplyToComment}
+                      isAdmin={isAdmin}
+                      currentUserComments={currentUserComments}
+                      handleDeleteComment={handleDeleteComment}
+                      language={language}
+                      t={t}
+                    />
                   ))
                 ) : (
                   <p className="text-gray-500 text-center py-4">{t('comments.empty')}</p>
@@ -854,14 +866,16 @@ function TeachingsPageContent() {
               {/* Comment Form */}
               <form onSubmit={handleCommentSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder={t('comments.name')}
-                    value={commentForm.name}
-                    onChange={(e) => setCommentForm(prev => ({ ...prev, name: e.target.value }))}
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                    required
-                  />
+                  {!isAdmin && (
+                    <input
+                      type="text"
+                      placeholder={t('comments.name')}
+                      value={commentForm.name}
+                      onChange={(e) => setCommentForm(prev => ({ ...prev, name: e.target.value }))}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                      required
+                    />
+                  )}
                   <input
                     type="email"
                     placeholder={t('comments.email')}
@@ -958,6 +972,114 @@ function TikTokPreview({ videoUrl, setLightbox }: { videoUrl: string, setLightbo
       <FaPlayCircle className="text-white text-6xl drop-shadow-lg opacity-90 group-hover:scale-110 transition-transform" style={{ filter: 'drop-shadow(0 2px 8px #000)' }} />
       {!isTikTok && (
         <span className="absolute bottom-2 left-2 text-xs text-red-500">Invalid TikTok link</span>
+      )}
+    </div>
+  );
+} 
+
+interface RenderCommentProps {
+  comment: Comment;
+  onReply: (parentCommentId: string, replyForm: { content: string }) => Promise<void>;
+  isAdmin: boolean;
+  currentUserComments: Set<string>;
+  handleDeleteComment: (commentId: string) => void;
+  language: string;
+  t: any;
+}
+const RenderComment: FC<RenderCommentProps> = ({ comment, onReply, isAdmin, currentUserComments, handleDeleteComment, language, t }: RenderCommentProps) => {
+  const [showReplyForm, setShowReplyForm] = React.useState(false);
+  const [replyForm, setReplyForm] = React.useState({ content: '' });
+  const [loading, setLoading] = React.useState(false);
+  const [showAllReplies, setShowAllReplies] = React.useState(false);
+  const handleReply = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    const replyData = isAdmin ? { ...replyForm, name: 'Admin' } : replyForm;
+    await onReply(comment._id || "", replyData);
+    setReplyForm({ content: '' });
+    setShowReplyForm(false);
+    setLoading(false);
+  };
+  // Helper to get a safe label for reply UI
+  const getReplyLabel = () => {
+    const label = t('comments.reply');
+    return (!label || label === 'comments.reply') ? 'Reply' : label;
+  };
+  const getShowMoreLabel = () => {
+    const label = t('comments.showMore');
+    return (!label || label === 'comments.showMore') ? 'Show more replies' : label;
+  };
+  const getShowLessLabel = () => {
+    const label = t('comments.showLess');
+    return (!label || label === 'comments.showLess') ? 'Show less replies' : label;
+  };
+  const getCancelReplyLabel = () => {
+    const label = t('comments.cancelReply');
+    return (!label || label === 'comments.cancelReply') ? 'Cancel' : label;
+  };
+  const getPostReplyLabel = () => {
+    const label = t('comments.postReply');
+    return (!label || label === 'comments.postReply') ? 'Post Reply' : label;
+  };
+  const getReplyPlaceholder = () => {
+    const label = t('comments.replyPlaceholder');
+    return (!label || label === 'comments.replyPlaceholder') ? 'Reply...' : label;
+  };
+  // Only show first 2 direct replies, rest are hidden behind show more
+  const replies = Array.isArray(comment.replies) ? comment.replies : [];
+  const showAll = showAllReplies;
+  const repliesToShow = !showAll && replies.length > 2 ? replies.slice(0, 2) : replies;
+  const hasHiddenReplies = replies.length > 2 && !showAll;
+  return (
+    <div className="bg-gray-100 rounded p-2 text-sm mb-2">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="font-bold">{comment.name}</span>
+        {comment.isAdmin && (
+          <span className="ml-2 px-2 py-0.5 rounded-full bg-yellow-400 text-white text-xs font-bold">Admin</span>
+        )}
+        <span className="text-xs text-gray-400">{new Date(comment.date).toLocaleDateString(language)}</span>
+      </div>
+      <div className="mb-1">{comment.content}</div>
+      <div className="flex gap-2 mt-1">
+        {isAdmin && (
+          <button className="text-red-500 hover:text-red-700 text-xs" onClick={() => handleDeleteComment(comment._id || "")}>{t('comments.delete') || 'Delete'}</button>
+        )}
+        <button className="text-blue-500 hover:underline text-xs" onClick={() => setShowReplyForm(!showReplyForm)}>
+          {showReplyForm ? getCancelReplyLabel() : getReplyLabel()}
+        </button>
+      </div>
+      {showReplyForm && (
+        <form onSubmit={handleReply} className="mt-2 flex flex-col gap-1">
+          {!isAdmin && (
+            <input
+              type="text"
+              placeholder={t('comments.name')}
+              value={replyForm.name || ''}
+              onChange={e => setReplyForm(prev => ({ ...prev, name: e.target.value }))}
+              className="p-1 rounded border text-xs"
+              required
+            />
+          )}
+          <textarea placeholder={getReplyPlaceholder()} value={replyForm.content} onChange={e => setReplyForm({ ...replyForm, content: e.target.value })} className="p-1 rounded border text-xs" required />
+          <button type="submit" className="bg-yellow-400 text-white rounded px-2 py-1 text-xs mt-1" disabled={loading}>{loading ? (t('comments.posting') || 'Posting...') : getPostReplyLabel()}</button>
+        </form>
+      )}
+      {replies.length > 0 && (
+        <div className="ml-4 mt-2 border-l border-yellow-100 pl-3 bg-gray-50">
+          {repliesToShow.map((reply: Comment, idx: number) => (
+            <RenderComment key={reply._id || idx} comment={reply} onReply={onReply} isAdmin={isAdmin} currentUserComments={currentUserComments} handleDeleteComment={handleDeleteComment} language={language} t={t} />
+          ))}
+          {hasHiddenReplies && (
+            <button className="text-xs text-blue-500 mt-1" onClick={() => setShowAllReplies(true)}>
+              {getShowMoreLabel()}
+            </button>
+          )}
+          {showAll && replies.length > 2 && (
+            <button className="text-xs text-blue-500 mt-1" onClick={() => setShowAllReplies(false)}>
+              {getShowLessLabel()}
+            </button>
+          )}
+        </div>
       )}
     </div>
   );

@@ -53,4 +53,80 @@ export async function DELETE(
       { status: 500 }
     );
   }
+}
+
+// Helper to recursively find the parent comment and its array
+interface CommentDoc {
+  _id?: any;
+  replies?: CommentDoc[];
+  [key: string]: any;
+}
+function findParentAndArray(comments: CommentDoc[], parentId: string): { parent: CommentDoc, array: CommentDoc[] } | null {
+  for (let comment of comments) {
+    if (comment._id && comment._id.toString() === parentId) {
+      return { parent: comment, array: comments };
+    }
+    if (comment.replies && comment.replies.length > 0) {
+      const found = findParentAndArray(comment.replies, parentId);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+// Find the path to the parent for markModified
+function findPath(comments: CommentDoc[], parentId: string, basePath: string): string | null {
+  for (let i = 0; i < comments.length; i++) {
+    const comment = comments[i];
+    if (comment._id && comment._id.toString() === parentId) {
+      return basePath + `.${i}.replies`;
+    }
+    if (comment.replies && comment.replies.length > 0) {
+      const subPath = findPath(comment.replies, parentId, basePath + `.${i}.replies`);
+      if (subPath) return subPath;
+    }
+  }
+  return null;
+}
+
+// Add reply to a comment
+export async function POST(
+  request: NextRequest,
+  { params }: { params: { id: string; commentId: string } }
+) {
+  try {
+    await connectDB();
+    const { content, isAdmin } = await request.json();
+    const article = await Article.findById(params.id);
+    if (!article) {
+      return NextResponse.json({ error: 'Article not found' }, { status: 404 });
+    }
+    const reply = {
+      name: isAdmin ? 'Admin' : 'Anonymous',
+      content,
+      date: new Date(),
+      userId: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+      isAdmin,
+      replies: [],
+    };
+    const found = findParentAndArray(article.comments, params.commentId);
+    if (!found) {
+      return NextResponse.json({ error: 'Comment not found' }, { status: 404 });
+    }
+    found.parent.replies = found.parent.replies || [];
+    found.parent.replies.push(reply);
+    // Mark the path as modified for Mongoose
+    const modifiedPath = findPath(article.comments, params.commentId, 'comments');
+    if (modifiedPath) {
+      article.markModified(modifiedPath);
+    } else {
+      article.markModified('comments');
+    }
+    console.log('COMMENTS BEFORE SAVE:', JSON.stringify(article.comments, null, 2));
+    await article.save();
+    return NextResponse.json({ success: true, reply });
+  } catch (error) {
+    console.error('Error replying to comment:', error);
+    return NextResponse.json({ error: 'Failed to reply to comment' }, { status: 500 });
+  }
 } 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, FC, FormEvent } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -350,56 +350,165 @@ export default function LatestPostsCarousel() {
   );
 }
 
-function TikTokPreview({ videoUrl }: { videoUrl: string }) {
-  const [expandedUrl, setExpandedUrl] = React.useState(videoUrl);
-  React.useEffect(() => {
-    expandTikTokLinkIfNeeded(videoUrl).then(setExpandedUrl);
-  }, [videoUrl]);
-  const isTikTok = /tiktok\.com\//.test(expandedUrl);
-  const match = expandedUrl.match(/tiktok\.com\/.*video\/(\d+)/);
-  const embedUrl = match ? `https://www.tiktok.com/embed/${match[1]}` : '';
-  return (
-    <span className="text-white text-3xl">{isTikTok && embedUrl ? '🎬' : 'No Media'}</span>
-  );
+interface Comment {
+  _id?: string;
+  name: string;
+  email?: string;
+  content: string;
+  date: string;
+  userId: string;
+  isAdmin?: boolean;
+  replies?: Comment[];
 }
 
-function CommentsSection({ postId }: { postId: string }) {
-  const [comments, setComments] = React.useState<any[]>([]);
-  const [form, setForm] = React.useState({ name: '', content: '' });
+interface RenderCommentProps {
+  comment: Comment;
+  onReply: (parentCommentId: string, replyForm: { content: string }) => Promise<void>;
+  isAdmin: boolean;
+  handleDelete: (commentId: string) => void;
+}
+
+const RenderComment: FC<RenderCommentProps> = ({ comment, onReply, isAdmin, handleDelete }: RenderCommentProps) => {
+  const [showReplyForm, setShowReplyForm] = React.useState(false);
+  const [replyForm, setReplyForm] = React.useState({ content: '' });
   const [loading, setLoading] = React.useState(false);
-  const [success, setSuccess] = React.useState('');
-  React.useEffect(() => {
-    fetch(`/api/articles/${postId}/comments`).then(res => res.json()).then(data => setComments(data.comments || []));
-  }, [postId]);
-  const handleSubmit = async (e: React.FormEvent) => {
+  const [showAllReplies, setShowAllReplies] = React.useState(false);
+  // Helper to get a safe reply label
+  const getReplyLabel = () => 'Reply';
+  const getShowMoreLabel = () => 'Show more replies';
+  const getShowLessLabel = () => 'Show less replies';
+  const getCancelReplyLabel = () => 'Cancel';
+  const getPostReplyLabel = () => 'Post Reply';
+  const getReplyPlaceholder = () => 'Reply...';
+  const replies = Array.isArray(comment.replies) ? comment.replies : [];
+  const showAll = showAllReplies;
+  const repliesToShow = !showAll && replies.length > 2 ? replies.slice(0, 2) : replies;
+  const hasHiddenReplies = replies.length > 2 && !showAll;
+  const handleReply = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    const replyData = isAdmin ? { ...replyForm, name: 'Admin' } : replyForm;
+    await onReply(comment._id || "", replyData);
+    setReplyForm({ content: '' });
+    setShowReplyForm(false);
+    setLoading(false);
+  };
+  return (
+    <div className="bg-gray-100 rounded p-2 text-sm mb-2">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="font-bold">{comment.name}</span>
+        {comment.isAdmin && (
+          <span className="ml-2 px-2 py-0.5 rounded-full bg-yellow-400 text-white text-xs font-bold">Admin</span>
+        )}
+        <span className="text-xs text-gray-400">{new Date(comment.date).toLocaleDateString()}</span>
+      </div>
+      <div>{comment.content}</div>
+      {isAdmin && (
+        <div className="flex gap-2 mt-1">
+          <button className="text-red-500 hover:text-red-700 text-xs" onClick={() => handleDelete(comment._id || "")}>Delete</button>
+        </div>
+      )}
+      <button className="text-blue-500 hover:underline text-xs mt-1" onClick={() => setShowReplyForm(!showReplyForm)}>
+        {showReplyForm ? getCancelReplyLabel() : getReplyLabel()}
+      </button>
+      {showReplyForm && (
+        <form onSubmit={handleReply} className="mt-2 flex flex-col gap-1">
+          {!isAdmin && (
+            <input type="text" placeholder="Your name" value={replyForm.name || ''} onChange={e => setReplyForm(prev => ({ ...prev, name: e.target.value }))} className="p-1 rounded border text-xs" required />
+          )}
+          <textarea placeholder={getReplyPlaceholder()} value={replyForm.content} onChange={e => setReplyForm({ ...replyForm, content: e.target.value })} className="p-1 rounded border text-xs" required />
+          <button type="submit" className="bg-yellow-400 text-white rounded px-2 py-1 text-xs mt-1" disabled={loading}>{loading ? 'Posting...' : getPostReplyLabel()}</button>
+        </form>
+      )}
+      {replies.length > 0 && (
+        <div className="ml-4 mt-2 border-l border-yellow-100 pl-3 bg-gray-50">
+          {repliesToShow.map((reply: Comment, idx: number) => (
+            <RenderComment key={reply._id || idx} comment={reply} onReply={onReply} isAdmin={isAdmin} handleDelete={handleDelete} />
+          ))}
+          {hasHiddenReplies && (
+            <button className="text-xs text-blue-500 mt-1" onClick={() => setShowAllReplies(true)}>
+              {getShowMoreLabel()}
+            </button>
+          )}
+          {showAll && replies.length > 2 && (
+            <button className="text-xs text-blue-500 mt-1" onClick={() => setShowAllReplies(false)}>
+              {getShowLessLabel()}
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+function CommentsSection({ postId }: { postId: string }) {
+  const [comments, setComments] = React.useState<Comment[]>([]);
+  const [form, setForm] = React.useState({ name: '', email: '', content: '' });
+  const [loading, setLoading] = React.useState(false);
+  const [success, setSuccess] = React.useState('');
+  const [isAdmin, setIsAdmin] = React.useState(false);
+
+  React.useEffect(() => {
+    fetch('/api/admin/check').then(res => res.json()).then(data => setIsAdmin(data.isAdmin));
+  }, []);
+
+  const fetchComments = () => {
+    fetch(`/api/articles/${postId}/comments`).then(res => res.json()).then(data => setComments(data.comments || []));
+  };
+
+  React.useEffect(() => {
+    fetchComments();
+  }, [postId]);
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
+    const submitData = isAdmin ? { ...form, name: 'Admin' } : form;
     await fetch(`/api/articles/${postId}/comments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
+      body: JSON.stringify(submitData),
     });
-    setForm({ name: '', content: '' });
+    setForm({ name: '', email: '', content: '' });
     setSuccess('Comment added!');
     setLoading(false);
-    fetch(`/api/articles/${postId}/comments`).then(res => res.json()).then(data => setComments(data.comments || []));
+    fetchComments();
   };
+
+  const handleDelete = async (commentId: string) => {
+    if (!window.confirm('Are you sure you want to delete this comment?')) return;
+    await fetch(`/api/articles/${postId}/comments/${commentId}`, { method: 'DELETE' });
+    fetchComments();
+  };
+
+  const handleReplyToComment = async (parentCommentId: string, replyForm: { content: string }) => {
+    setLoading(true);
+    await fetch(`/api/articles/${postId}/comments/${parentCommentId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...replyForm, isAdmin }),
+    });
+    fetchComments();
+    setLoading(false);
+  };
+
   return (
     <div className="mt-6">
       <h4 className="text-lg font-semibold mb-2">Comments</h4>
       {comments.length > 0 ? (
-        <ul className="space-y-2 mb-4">
+        <div className="space-y-2 mb-4">
           {comments.map((comment, idx) => (
-            <li key={idx} className="bg-gray-100 rounded p-2 text-sm">
-              <span className="font-bold">{comment.name}:</span> {comment.content}
-            </li>
+            <RenderComment key={comment.userId || idx} comment={comment} onReply={handleReplyToComment} isAdmin={isAdmin} handleDelete={handleDelete} />
           ))}
-        </ul>
+        </div>
       ) : (
         <div className="text-gray-400 mb-4">No comments yet.</div>
       )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
-        <input type="text" placeholder="Your name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="p-2 rounded border" required />
+        {!isAdmin && (
+          <input type="text" placeholder="Your name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="p-2 rounded border" required />
+        )}
+        <input type="email" placeholder="Email (optional)" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="p-2 rounded border" />
         <textarea placeholder="Your comment" value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} className="p-2 rounded border" required />
         <button type="submit" className="bg-blue-700 text-white rounded px-4 py-2 mt-2" disabled={loading}>{loading ? 'Posting...' : 'Add Comment'}</button>
       </form>

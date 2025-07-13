@@ -24,7 +24,14 @@ const CommentSchema = new Schema({
     type: String,
     required: false, // For anonymous comments
   },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+// Add recursive replies after schema definition
+CommentSchema.add({ replies: [CommentSchema] });
 
 const ArticleSchema = new Schema({
   title: {

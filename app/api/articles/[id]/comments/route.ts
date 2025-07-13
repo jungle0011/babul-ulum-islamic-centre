@@ -30,12 +30,14 @@ export async function POST(
       );
     }
 
+    const isAdmin = isAdminAuthenticated();
     const newComment = {
       name,
       email: email || '',
       content,
       date: new Date(),
       userId,
+      isAdmin,
     };
 
     article.comments.push(newComment);

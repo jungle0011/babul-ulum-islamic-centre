@@ -9,7 +9,7 @@ const resources = {
       "nav.about": "About",
       "nav.services": "Services",
       "nav.contact": "Contact",
-      "nav.bookshop": "Bookshop",
+      "nav.bookshop": "Secret Room",
       "nav.dailyUpdates": "Daily Updates",
       "dailyUpdates.title": "Daily Updates",
 
@@ -290,7 +290,7 @@ const resources = {
       "nav.about": "من نحن",
       "nav.services": "خدماتنا",
       "nav.contact": "اتصل بنا",
-      "nav.bookshop": "المكتبة",
+      "nav.bookshop": "الغرفة السرية",
       "nav.dailyUpdates": "التحديثات اليومية",
       "dailyUpdates.title": "التحديثات اليومية",
 
@@ -562,7 +562,7 @@ const resources = {
       "nav.about": "Game da Mu",
       "nav.services": "Ayyuka",
       "nav.contact": "Tuntube Mu",
-      "nav.bookshop": "Littattafai",
+      "nav.bookshop": "Dakin Sirri",
       "nav.dailyUpdates": "Sabbin Labarai",
       "dailyUpdates.title": "Sabbin Labarai",
 
@@ -691,7 +691,7 @@ const resources = {
       "nav.about": "À propos",
       "nav.services": "Services",
       "nav.contact": "Contact",
-      "nav.bookshop": "Librairie",
+      "nav.bookshop": "Chambre Secrète",
       "nav.dailyUpdates": "Mises à jour quotidiennes",
       "dailyUpdates.title": "Mises à jour quotidiennes",
 
