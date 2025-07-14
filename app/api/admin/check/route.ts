@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
+console.log('JWT_SECRET in production:', JWT_SECRET ? 'SET' : 'NOT SET');
+console.log('JWT_SECRET length:', JWT_SECRET ? JWT_SECRET.length : 0);
 
 export async function GET(request: Request) {
   // Add request ID for debugging
