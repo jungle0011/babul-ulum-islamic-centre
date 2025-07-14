@@ -103,6 +103,10 @@ function TeachingsPageContent() {
         // Get JWT token from localStorage
         const token = typeof window !== 'undefined' ? localStorage.getItem('babul_admin_jwt') : null;
         console.log('JWT token for admin check:', token ? 'present' : 'missing');
+        if (token) {
+          console.log('JWT token length:', token.length);
+          console.log('JWT token first 20 chars:', token.substring(0, 20) + '...');
+        }
         
         const headers: HeadersInit = {};
         if (token) {
