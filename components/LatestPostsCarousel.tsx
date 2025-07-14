@@ -467,7 +467,7 @@ function CommentsSection({ postId }: { postId: string }) {
           headers['Authorization'] = `Bearer ${token}`;
         }
         
-        const res = await fetch('/api/admin/check', { headers });
+        const res = await fetch('/api/admin/check', { method: 'POST', headers });
         const data = await res.json();
         console.log('Modal admin check response:', data);
         setIsAdmin(data.isAdmin);

@@ -5,10 +5,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'supersecretkey';
 console.log('JWT_SECRET in production:', JWT_SECRET ? 'SET' : 'NOT SET');
 console.log('JWT_SECRET length:', JWT_SECRET ? JWT_SECRET.length : 0);
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   // Add request ID for debugging
   const requestId = Math.random().toString(36).substring(7);
-  
   try {
     const { searchParams } = new URL(request.url);
     const forceAdmin = searchParams.get('forceAdmin');

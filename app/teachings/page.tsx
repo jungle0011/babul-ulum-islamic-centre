@@ -117,6 +117,7 @@ function TeachingsPageContent() {
         }
         
         const res = await fetch('/api/admin/check', {
+          method: 'POST',
           headers
         });
         if (res.ok) {
