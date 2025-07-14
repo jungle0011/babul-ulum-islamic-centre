@@ -402,9 +402,10 @@ const RenderComment: FC<RenderCommentProps> = ({ comment, onReply, isAdmin, hand
   return (
     <div className="bg-gray-100 rounded p-2 text-sm mb-2">
       <div className="flex items-center gap-2 mb-1">
-        <span className="font-bold">{comment.name}</span>
-        {comment.isAdmin && (
-          <span className="ml-2 px-2 py-0.5 rounded-full bg-yellow-400 text-white text-xs font-bold">Admin</span>
+        {comment.isAdmin ? (
+          <span className="px-2 py-0.5 rounded-full bg-yellow-400 text-white text-xs font-bold">Admin</span>
+        ) : (
+          <span className="font-bold">{comment.name}</span>
         )}
         <span className="text-xs text-gray-400">{new Date(comment.date).toLocaleDateString()}</span>
       </div>
@@ -419,6 +420,7 @@ const RenderComment: FC<RenderCommentProps> = ({ comment, onReply, isAdmin, hand
       </button>
       {showReplyForm && (
         <form onSubmit={handleReply} className="mt-2 flex flex-col gap-1">
+          {/* Only show name input for non-admins */}
           {!isAdmin && (
             <input type="text" placeholder="Your name" value={replyForm.name || ''} onChange={e => setReplyForm(prev => ({ ...prev, name: e.target.value }))} className="p-1 rounded border text-xs" required />
           )}

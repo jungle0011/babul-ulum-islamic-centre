@@ -908,13 +908,16 @@ function TeachingsPageContent() {
                       required
                     />
                   )}
-                  <input
-                    type="email"
-                    placeholder={t('comments.email')}
-                    value={commentForm.email}
-                    onChange={(e) => setCommentForm(prev => ({ ...prev, email: e.target.value }))}
-                    className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
-                  />
+                  {/* Only show email input for non-admins */}
+                  {!isAdmin && (
+                    <input
+                      type="email"
+                      placeholder={t('comments.email')}
+                      value={commentForm.email}
+                      onChange={(e) => setCommentForm(prev => ({ ...prev, email: e.target.value }))}
+                      className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-400"
+                    />
+                  )}
                 </div>
                 <textarea
                   placeholder={t('comments.content')}
@@ -1089,6 +1092,7 @@ const RenderComment: FC<RenderCommentProps> = ({ comment, onReply, isAdmin, curr
       </div>
       {showReplyForm && (
         <form onSubmit={handleReply} className="mt-2 flex flex-col gap-1">
+          {/* Only show name input for non-admins */}
           {!isAdmin && (
             <input
               type="text"
