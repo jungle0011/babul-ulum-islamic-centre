@@ -99,13 +99,16 @@ function TeachingsPageContent() {
   // Check admin status
   useEffect(() => {
     const checkAdmin = async () => {
+      const requestId = Math.random().toString(36).substring(7);
+      console.log(`[${requestId}] Frontend admin check started`);
+      
       try {
         // Get JWT token from localStorage
         const token = typeof window !== 'undefined' ? localStorage.getItem('babul_admin_jwt') : null;
-        console.log('JWT token for admin check:', token ? 'present' : 'missing');
+        console.log(`[${requestId}] JWT token for admin check:`, token ? 'present' : 'missing');
         if (token) {
-          console.log('JWT token length:', token.length);
-          console.log('JWT token first 20 chars:', token.substring(0, 20) + '...');
+          console.log(`[${requestId}] JWT token length:`, token.length);
+          console.log(`[${requestId}] JWT token first 20 chars:`, token.substring(0, 20) + '...');
         }
         
         const headers: HeadersInit = {};
@@ -118,15 +121,15 @@ function TeachingsPageContent() {
         });
         if (res.ok) {
           const data = await res.json();
-          console.log('Admin check response:', data);
+          console.log(`[${requestId}] Admin check response:`, data);
           setIsAdmin(data.isAdmin);
         }
       } catch (error) {
-        console.log('Admin check error:', error);
+        console.log(`[${requestId}] Admin check error:`, error);
         setIsAdmin(false);
       }
       setCheckedAdmin(true);
-      console.log('Admin check completed, isAdmin:', isAdmin, 'checkedAdmin:', true);
+      console.log(`[${requestId}] Admin check completed, isAdmin:`, isAdmin, 'checkedAdmin:', true);
     };
     checkAdmin();
   }, []);
