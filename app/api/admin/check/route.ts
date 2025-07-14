@@ -38,7 +38,10 @@ export async function GET(request: Request) {
     try {
       const decoded = jwt.verify(token, JWT_SECRET) as { isAdmin?: boolean };
       console.log(`[${requestId}] JWT decoded successfully:`, decoded);
+      console.log(`[${requestId}] JWT payload isAdmin value:`, decoded.isAdmin);
+      console.log(`[${requestId}] JWT payload isAdmin type:`, typeof decoded.isAdmin);
       const isAdmin = decoded.isAdmin === true;
+      console.log(`[${requestId}] Final isAdmin result:`, isAdmin);
       console.log(`[${requestId}] Admin check API called, isAdmin:`, isAdmin);
       return NextResponse.json({ isAdmin });
     } catch (jwtError) {
