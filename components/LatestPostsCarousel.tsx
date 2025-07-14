@@ -97,6 +97,23 @@ export default function LatestPostsCarousel() {
     };
   }, [posts]);
 
+  // Duplicate posts if not enough for loop mode
+  const getLoopablePosts = (posts: Teaching[]) => {
+    if (posts.length === 0) return [];
+    // Always ensure at least 6 slides for loop mode to work on all screens
+    let arr = [...posts];
+    while (arr.length < 6) {
+      arr = arr.concat(posts);
+    }
+    return arr.slice(0, 6);
+  };
+
+  const loopablePosts = getLoopablePosts(posts);
+
+  if (loopablePosts.length === 0) {
+    return null; // or return <div className="text-center py-8 text-gray-400">No posts available.</div>;
+  }
+
   return (
     <section className="max-w-6xl mx-auto py-8 px-0">
       <h2 className="text-2xl md:text-3xl font-bold text-blue-900 mb-6 text-center tracking-tight">{t('latest_dailyUpdates')}</h2>
@@ -128,11 +145,11 @@ export default function LatestPostsCarousel() {
             // Optionally log slide changes
           }}
         >
-          {posts.map(post => (
-            <SwiperSlide key={post._id}>
+          {loopablePosts.map((post, idx) => (
+            <SwiperSlide key={post._id + '-' + idx}>
               <div
-                className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 rounded-2xl shadow-xl p-4 h-[260px] w-full flex flex-col justify-between cursor-pointer hover:scale-[1.03] transition-transform border-2 border-yellow-400/40 mx-8" // mx-8 for card margin, h-260px for compact height
-                style={{ minWidth: 220, maxWidth: 260 }}
+                className="bg-gradient-to-br from-blue-900 via-blue-800 to-blue-900 rounded-2xl shadow-xl p-6 h-[340px] w-full flex flex-col justify-between cursor-pointer hover:scale-[1.03] transition-transform border-2 border-yellow-400/40 mx-8" // Increased padding and height
+                style={{ minWidth: 280, maxWidth: 340 }} // Increased width
                 onClick={() => setModalPost(post)}
               >
                 <div className="flex items-center justify-center w-full h-40 mb-3 bg-blue-950 rounded-lg border border-yellow-200">
