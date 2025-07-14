@@ -550,7 +550,10 @@ function CommentsSection({ postId }: { postId: string }) {
         {!isAdmin && (
           <input type="text" placeholder="Your name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} className="p-2 rounded border" required />
         )}
-        <input type="email" placeholder="Email (optional)" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="p-2 rounded border" />
+        {/* Only show email input for non-admins */}
+        {!isAdmin && (
+          <input type="email" placeholder="Email (optional)" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="p-2 rounded border" />
+        )}
         <textarea placeholder="Your comment" value={form.content} onChange={e => setForm({ ...form, content: e.target.value })} className="p-2 rounded border" required />
         <button type="submit" className="bg-blue-700 text-white rounded px-4 py-2 mt-2" disabled={loading}>{loading ? 'Posting...' : 'Add Comment'}</button>
       </form>
