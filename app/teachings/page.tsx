@@ -290,7 +290,7 @@ function TeachingsPageContent() {
       if (res.ok) {
         setModalTeaching(prev => prev ? {
           ...prev,
-          comments: prev.comments?.filter(c => c.userId !== commentId) || []
+          comments: prev.comments?.filter(c => c._id !== commentId) || []
         } : null);
         setCurrentUserComments(prev => {
           const newSet = new Set(Array.from(prev));
@@ -1071,9 +1071,10 @@ const RenderComment: FC<RenderCommentProps> = ({ comment, onReply, isAdmin, curr
   return (
     <div className="bg-gray-100 rounded p-2 text-sm mb-2">
       <div className="flex items-center gap-2 mb-1">
-        <span className="font-bold">{comment.name}</span>
-        {comment.isAdmin && (
-          <span className="ml-2 px-2 py-0.5 rounded-full bg-yellow-400 text-white text-xs font-bold">Admin</span>
+        {comment.isAdmin ? (
+          <span className="px-2 py-0.5 rounded-full bg-yellow-400 text-white text-xs font-bold">Admin</span>
+        ) : (
+          <span className="font-bold">{comment.name}</span>
         )}
         <span className="text-xs text-gray-400">{new Date(comment.date).toLocaleDateString(language)}</span>
       </div>
