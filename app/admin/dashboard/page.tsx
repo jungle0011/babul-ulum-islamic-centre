@@ -150,7 +150,12 @@ export default function AdminDashboard() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this article?')) return;
-    const res = await fetch(`/api/articles/${id}`, { method: 'DELETE' });
+    const token = typeof window !== 'undefined' ? localStorage.getItem('babul_admin_jwt') : null;
+    const fetchOptions: RequestInit = { method: 'DELETE' };
+    if (token) {
+      fetchOptions.headers = { 'Authorization': `Bearer ${token}` };
+    }
+    const res = await fetch(`/api/articles/${id}`, fetchOptions);
     if (res.ok) fetchArticles();
     else setError('Failed to delete');
   };

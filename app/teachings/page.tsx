@@ -231,9 +231,12 @@ function TeachingsPageContent() {
     if (!confirm(t('admin.deleteConfirm'))) return;
     
     try {
-      const res = await fetch(`/api/articles/${teachingId}`, {
-        method: 'DELETE'
-      });
+      const token = typeof window !== 'undefined' ? localStorage.getItem('babul_admin_jwt') : null;
+      const fetchOptions: RequestInit = { method: 'DELETE' };
+      if (token) {
+        fetchOptions.headers = { 'Authorization': `Bearer ${token}` };
+      }
+      const res = await fetch(`/api/articles/${teachingId}`, fetchOptions);
       
       if (res.ok) {
         setTeachings(prev => prev.filter(t => t._id !== teachingId));
@@ -751,14 +754,28 @@ function TeachingsPageContent() {
                 >
                   {modalTeaching.media.map((media, idx) => (
                     <SwiperSlide key={idx}>
-                      {media.type === 'image' ? (
-                        <img src={media.url ? media.url : ''} alt="media" className="w-full h-64 object-contain rounded-lg cursor-pointer" onClick={() => setLightbox({ media: modalTeaching.media!, index: idx })} />
-                      ) : (
-                        <div className="w-full h-64 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={() => setLightbox({ media: modalTeaching.media!, index: idx })}>
-                          <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
-                          <img src="/video-thumb.png" alt="video" className="w-full h-64 object-contain rounded-lg opacity-60" />
-                        </div>
-                      )}
+                      <div className="relative w-full h-64 flex items-center justify-center">
+                        {media.type === 'image' ? (
+                          <>
+                            <img src={media.url ? media.url : ''} alt="media" className="w-full h-64 object-contain rounded-lg cursor-pointer" onClick={() => setLightbox({ media: modalTeaching.media!, index: idx })} />
+                            {/* Zoom icon overlay */}
+                            <button
+                              className="absolute bottom-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full p-2 z-20 flex items-center justify-center"
+                              title="View in Full Mode"
+                              onClick={e => { e.stopPropagation(); window.open(media.url, '_blank'); }}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 3v2.25A2.25 2.25 0 0018 7.5h2.25M8.25 21v-2.25A2.25 2.25 0 006 16.5H3.75M21 8.25V6a2.25 2.25 0 00-2.25-2.25H15.75M3 15.75V18a2.25 2.25 0 002.25 2.25H8.25" />
+                              </svg>
+                            </button>
+                          </>
+                        ) : (
+                          <div className="w-full h-64 flex items-center justify-center bg-black rounded-lg cursor-pointer relative" onClick={() => setLightbox({ media: modalTeaching.media!, index: idx })}>
+                            <span className="text-white text-5xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">▶️</span>
+                            <img src="/video-thumb.png" alt="video" className="w-full h-64 object-contain rounded-lg opacity-60" />
+                          </div>
+                        )}
+                      </div>
                     </SwiperSlide>
                   ))}
                 </Swiper>

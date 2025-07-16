@@ -3,6 +3,8 @@ import dbConnect from '@/lib/mongodb';
 import Article from '@/lib/models/Article';
 import { isAdminAuthenticated } from '@/lib/session';
 
+const _jwtSecret = process.env.JWT_SECRET;
+
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   await dbConnect();
   const article = await Article.findById(params.id);
@@ -13,7 +15,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  if (!isAdminAuthenticated()) {
+  if (!isAdminAuthenticated(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   await dbConnect();
@@ -31,7 +33,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
-  if (!isAdminAuthenticated()) {
+  console.log('=== DELETE endpoint hit ===');
+  console.log('JWT_SECRET in delete:', process.env.JWT_SECRET);
+  console.log('Authorization header in delete:', req.headers.get('authorization'));
+  if (!isAdminAuthenticated(req)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   await dbConnect();
