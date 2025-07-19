@@ -158,6 +158,11 @@ export default function LatestPostsCarousel() {
   const [lightboxImg, setLightboxImg] = useState<string | null>(null);
   const router = useRouter();
 
+  // Reset lightbox when modalPost changes
+  useEffect(() => {
+    setLightboxImg(null);
+  }, [modalPost]);
+
   useEffect(() => {
     fetch('/api/articles')
       .then(res => res.json())

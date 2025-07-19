@@ -36,7 +36,7 @@ interface Carousel3DProps {
 const Carousel3D = ({
   items,
   autoRotate = true,
-  rotateInterval = 4000,
+  rotateInterval = 2500,
   cardHeight = 500,
   title = "From Textile to Intelligence",
   subtitle = "Customer Cases",
@@ -50,8 +50,20 @@ const Carousel3D = ({
   const [isHovering, setIsHovering] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-  const isMobile = false; // fallback, you can implement your own hook
+  const [isMobile, setIsMobile] = useState(false);
   const minSwipeDistance = 50;
+
+  // Mobile detection
+  useEffect(() => {
+    const checkMobile = () => {
+      if (typeof window !== 'undefined') {
+        setIsMobile(window.innerWidth <= 768 || /Mobi|Android/i.test(navigator.userAgent));
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     if (autoRotate && isInView && !isHovering) {
@@ -70,6 +82,21 @@ const Carousel3D = ({
     if (carouselRef.current) observer.observe(carouselRef.current);
     return () => observer.disconnect();
   }, []);
+
+  // Pause all videos except the active card
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  useEffect(() => {
+    videoRefs.current.forEach((video, idx) => {
+      if (video) {
+        if (idx === active) {
+          // Optionally play if needed
+        } else {
+          video.pause();
+          video.currentTime = 0;
+        }
+      }
+    });
+  }, [active, items.length]);
 
   const onTouchStart = (e: TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
@@ -123,7 +150,12 @@ const Carousel3D = ({
                 >
                   {/* Media preview */}
                   {item.mediaType === 'video' && item.mediaUrl ? (
-                    <video src={item.mediaUrl} controls className="w-full h-48 object-cover bg-black" />
+                    <video
+                      ref={el => { videoRefs.current[index] = el; }}
+                      src={item.mediaUrl}
+                      controls
+                      className="w-full h-48 object-cover bg-black"
+                    />
                   ) : item.mediaUrl ? (
                     <img src={item.mediaUrl} alt={item.title} className="w-full h-48 object-cover bg-gray-200" />
                   ) : item.imageUrl ? (
