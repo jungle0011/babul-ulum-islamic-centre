@@ -37,10 +37,10 @@ export async function DELETE(
     if (parentId) {
       // Delete a reply (nested comment)
       // Recursively find the parent comment and remove the reply from its replies array
-      function deleteReply(comments, parentId, replyId) {
+      const deleteReply = (comments: any[], parentId: string, replyId: string): boolean => {
         for (let comment of comments) {
           if (comment._id && comment._id.toString() === parentId && Array.isArray(comment.replies)) {
-            const idx = comment.replies.findIndex(r => r._id && r._id.toString() === replyId);
+            const idx = comment.replies.findIndex((r: any) => r._id && r._id.toString() === replyId);
             if (idx !== -1) {
               comment.replies.splice(idx, 1);
               return true;
@@ -52,7 +52,7 @@ export async function DELETE(
           }
         }
         return false;
-      }
+      };
       const deleted = deleteReply(article.comments, parentId, params.commentId);
       if (!deleted) {
         return NextResponse.json({ error: 'Reply not found' }, { status: 404 });
