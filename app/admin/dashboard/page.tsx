@@ -184,9 +184,12 @@ export default function AdminDashboard() {
     if (!editingId) return;
     setLoading(true);
     setError('');
+    const token = typeof window !== 'undefined' ? localStorage.getItem('babul_admin_jwt') : null;
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
     const res = await fetch(`/api/articles/${editingId}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         title: editTitle,
         content: editContent,

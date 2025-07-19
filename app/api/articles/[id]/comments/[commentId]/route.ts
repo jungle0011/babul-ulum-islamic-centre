@@ -11,7 +11,6 @@ export async function DELETE(
 ) {
   try {
     await connectDB();
-    
     // JWT admin check
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
@@ -25,7 +24,6 @@ export async function DELETE(
     } catch (err) {
       return NextResponse.json({ error: 'Invalid or expired token' }, { status: 401 });
     }
-
     const article = await Article.findById(params.id);
     if (!article) {
       return NextResponse.json(
@@ -33,31 +31,50 @@ export async function DELETE(
         { status: 404 }
       );
     }
-
-    // Find the comment by _id
-    const commentIndex = article.comments.findIndex(
-      (comment: any) => comment._id && comment._id.toString() === params.commentId
-    );
-
-    if (commentIndex === -1) {
-      return NextResponse.json(
-        { error: 'Comment not found' },
-        { status: 404 }
+    // Check for parentId query param
+    const { searchParams } = new URL(request.url);
+    const parentId = searchParams.get('parentId');
+    if (parentId) {
+      // Delete a reply (nested comment)
+      // Recursively find the parent comment and remove the reply from its replies array
+      function deleteReply(comments, parentId, replyId) {
+        for (let comment of comments) {
+          if (comment._id && comment._id.toString() === parentId && Array.isArray(comment.replies)) {
+            const idx = comment.replies.findIndex(r => r._id && r._id.toString() === replyId);
+            if (idx !== -1) {
+              comment.replies.splice(idx, 1);
+              return true;
+            }
+          }
+          if (comment.replies && comment.replies.length > 0) {
+            const found = deleteReply(comment.replies, parentId, replyId);
+            if (found) return true;
+          }
+        }
+        return false;
+      }
+      const deleted = deleteReply(article.comments, parentId, params.commentId);
+      if (!deleted) {
+        return NextResponse.json({ error: 'Reply not found' }, { status: 404 });
+      }
+      article.markModified('comments');
+      await article.save();
+      return NextResponse.json({ success: true });
+    } else {
+      // Delete a top-level comment (existing logic)
+      const commentIndex = article.comments.findIndex(
+        (comment: any) => comment._id && comment._id.toString() === params.commentId
       );
+      if (commentIndex === -1) {
+        return NextResponse.json(
+          { error: 'Comment not found' },
+          { status: 404 }
+        );
+      }
+      article.comments.splice(commentIndex, 1);
+      await article.save();
+      return NextResponse.json({ success: true });
     }
-
-    const comment = article.comments[commentIndex];
-
-    // Allow deletion only if user is admin
-    if (!isAdmin) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-    }
-
-    // Remove the comment
-    article.comments.splice(commentIndex, 1);
-    await article.save();
-
-    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting comment:', error);
     return NextResponse.json(
